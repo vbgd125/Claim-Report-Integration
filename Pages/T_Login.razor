@@ -28,18 +28,15 @@
 
 @code {
 
-    //[CascadingParameter]
-    //private Task<AuthenticationState> authenticationState { get; set; }
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    var authState = await authenticationState;
-    //    var user = authState.User;
-    //    base.OnInitialized();
-    //    if (user.Identity.IsAuthenticated)
-    //    {
-    //        navManager.NavigateTo("/Count", true);
-    //    }
-    //}
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    private async Task DisplayAlert()
+    {
+        var authState = await authenticationState;
+        var message = $"Hello {authState.User.Identity.Name}";
+        //await js.invokevoidasync("alert", message);
+    }
 
     [Inject] protected IHxMessengerService Messenger { get; set; }
 
@@ -63,7 +60,6 @@
             return;
         }
 
-        navManager.NavigateTo("/Count", true);
 
         var customAuthStateProvider = (CustomAuth)authStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(new UserSession
@@ -72,6 +68,8 @@
             Role = userAccount.First().Role,
             Cabang = userAccount.First().Cabang
         });
+
+        navManager.NavigateTo("/counter", true);
 
     }
 

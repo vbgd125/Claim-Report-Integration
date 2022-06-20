@@ -13,6 +13,9 @@ using TSJ_CRI.Data;
 using TSJ_CRI.Authentication;
 using Havit.Blazor.Components.Web;
 using Havit.Blazor.Components.Web.Bootstrap;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using Radzen;
 
 namespace TSJ_CRI
 {
@@ -36,6 +39,9 @@ namespace TSJ_CRI
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserAccountService>();
             services.AddSingleton<UserAuthAd>();
+            services.AddScoped<ProtectedSessionStorage>();
+            services.AddScoped<AuthenticationStateProvider, CustomAuth>();
+            services.AddScoped<NotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
