@@ -1,0 +1,36 @@
+﻿@using TSJ_CRI.Authentication
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <a @onclick="Logout" href="javascript:void(0)">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code{
+    private async Task Logout()
+    {
+        var customAuth = (CustomAuth)authStateProvider;
+        await customAuth.UpdateAuthenticationState(null);
+        navManager.NavigateTo("/", true);
+    }
+}
