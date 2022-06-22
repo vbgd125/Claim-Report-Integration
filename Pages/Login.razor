@@ -1,0 +1,125 @@
+﻿@page "/login"
+@layout EmptyLayout
+@using System.ComponentModel.DataAnnotations
+@using TSJ_CRI.Authentication
+@inject UserAccountService userAccountService
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+
+<style>
+    body {
+        background: #007bff;
+        background: linear-gradient(to right, #0062E6, #33AEFF);
+    }
+</style>
+
+<div id="layoutAuthentication">
+    <div id="layoutAuthentication_content">
+        <main>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="card shadow-lg border-0 rounded-lg mt-4">
+                            <div class="card-header"><h3 class="text-center font-weight-light my-4">TSJ Claim Report</h3></div>
+                            <div class="card-body">
+                                <EditForm Model="@model">
+                                    <DataAnnotationsValidator />
+                                    <HxInputText Label="User login windows" CssClass="mb-3" @bind-Value="@model.User" InputGroupEndText="@domain_tsj" Placeholder="namadepan.namabelakang" />
+                                    <HxInputText Label="Password login windows" Type="InputType.Password" CssClass="mb-3" @bind-Value="@model.Pass" Placeholder="Password" />
+                                    <HxSubmit Color="ThemeColor.Primary" OnValidClick="@(async () => await Auth(model))"><i class="bi bi-box-arrow-in-right"></i> Login</HxSubmit>
+                                </EditForm>
+                            </div>
+                            <div class="card-footer text-center py-3">
+                                <div class="small">
+                                    &copy; @DateTime.Now.Year Tri Sapta Jaya.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+
+
+@code {
+    private string domain_tsj = "@tsj.co.id";
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationState;
+        var user = authState.User;
+        base.OnInitialized();
+        if (user.Identity.IsAuthenticated)
+        {
+            navManager.NavigateTo("/", true);
+        }
+    }
+
+    protected UserLogin model = new UserLogin();
+    public class UserLogin
+    {
+        [Required(ErrorMessage = "Username tidak boleh kosong")]
+        [MaxLength(50, ErrorMessage = "Panjang maksimal username 50 karakter.")]
+        public string User { get; set; }
+        [Required(ErrorMessage = "Password tidak boleh kosong")]
+        [MaxLength(100, ErrorMessage = "Panjang maksimal password 100 karakter.")]
+        public string Pass { get; set; }
+    }
+
+    [Inject] protected IHxMessengerService Messenger { get; set; }
+    private async void ErrorMessenger(string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddError(title: "Login error", message: _message);
+        await Task.Delay(15000);
+        Messenger.Clear();
+    }
+
+    private async void WarningMessenger(string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddWarning(title: "Login gagal", message: _message);
+        await Task.Delay(15000);
+        Messenger.Clear();
+    }
+
+    private async Task Auth(UserLogin user)
+    {
+        await Task.Delay(1);
+        var userAccount = await userAccountService.GetUser(user.User, user.Pass);
+        if (userAccount.Item1 == null)
+        {
+            if (userAccount.Item2 == null)
+            {
+                ErrorMessenger(userAccount.Item3);
+                return;
+            }
+            else if (userAccount.Item3 == null)
+            {
+                WarningMessenger(userAccount.Item2);
+                return;
+            }
+        }
+        else if (userAccount.Item1 != null && userAccount.Item1.Count() == 0)
+        {
+            string message = "Username not found!";
+            WarningMessenger(message);
+            return;
+        }
+
+        var customAuthStateProvider = (CustomAuth)authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+            {
+                UserName = userAccount.Item1.First().UserName,
+                Role = userAccount.Item1.First().Role,
+                Cabang = userAccount.Item1.First().Cabang
+            });
+        navManager.NavigateTo("/", true);
+    }
+}

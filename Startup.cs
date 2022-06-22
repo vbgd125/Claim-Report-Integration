@@ -11,11 +11,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using TSJ_CRI.Data;
 using TSJ_CRI.Authentication;
-using Havit.Blazor.Components.Web;
-using Havit.Blazor.Components.Web.Bootstrap;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
+using Havit.Blazor.Components.Web;
+using Havit.Blazor.Components.Web.Bootstrap;
 
 namespace TSJ_CRI
 {
@@ -39,7 +39,6 @@ namespace TSJ_CRI
             services.AddHxMessenger();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserAccountService>();
-            services.AddSingleton<UserAuthAd>();
             services.AddScoped<ProtectedSessionStorage>();
             services.AddScoped<AuthenticationStateProvider, CustomAuth>();
             services.AddScoped<NotificationService>();

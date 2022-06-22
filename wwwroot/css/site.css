@@ -1,6 +1,6 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-html, body {
+/*html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -16,6 +16,10 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
+}*/
+
+a, .btn-link {
+    text-decoration: none;
 }
 
 .valid.modified:not([type=checkbox]) {
