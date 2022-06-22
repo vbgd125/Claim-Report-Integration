@@ -27,7 +27,10 @@
                                     <DataAnnotationsValidator />
                                     <HxInputText Label="User login windows" CssClass="mb-3" @bind-Value="@model.User" InputGroupEndText="@domain_tsj" Placeholder="namadepan.namabelakang" />
                                     <HxInputText Label="Password login windows" Type="InputType.Password" CssClass="mb-3" @bind-Value="@model.Pass" Placeholder="Password" />
-                                    <HxSubmit Color="ThemeColor.Primary" OnValidClick="@(async () => await Auth(model))"><i class="bi bi-box-arrow-in-right"></i> Login</HxSubmit>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <HxSubmit Color="ThemeColor.Primary" OnValidClick="@(async () => await Auth(model))"><i class="bi bi-box-arrow-in-right"></i> Login</HxSubmit>
+                                        <a class="small" href="http://helpdeskepm.enseval.com/">Belum daftar ?</a>
+                                    </div>
                                 </EditForm>
                             </div>
                             <div class="card-footer text-center py-3">
@@ -73,20 +76,20 @@
     }
 
     [Inject] protected IHxMessengerService Messenger { get; set; }
-    private async void ErrorMessenger(string _message)
+    private async void ErrorMessenger(string _title, string _message)
     {
-        Messenger.Clear();
-        Messenger.AddError(title: "Login error", message: _message);
+        //Messenger.Clear();
+        Messenger.AddError(title: _title, message: _message);
         await Task.Delay(15000);
-        Messenger.Clear();
+        //Messenger.Clear();
     }
 
-    private async void WarningMessenger(string _message)
+    private async void WarningMessenger(string _title, string _message)
     {
-        Messenger.Clear();
-        Messenger.AddWarning(title: "Login gagal", message: _message);
+        //Messenger.Clear();
+        Messenger.AddWarning(title: _title, message: _message);
         await Task.Delay(15000);
-        Messenger.Clear();
+        //Messenger.Clear();
     }
 
     private async Task Auth(UserLogin user)
@@ -97,19 +100,19 @@
         {
             if (userAccount.Item2 == null)
             {
-                ErrorMessenger(userAccount.Item3);
+                ErrorMessenger("Login error 😖", userAccount.Item3);
                 return;
             }
             else if (userAccount.Item3 == null)
             {
-                WarningMessenger(userAccount.Item2);
+                ErrorMessenger("Login error 😖", userAccount.Item2);
                 return;
             }
         }
         else if (userAccount.Item1 != null && userAccount.Item1.Count() == 0)
         {
-            string message = "Username not found!";
-            WarningMessenger(message);
+            string message = "User " + user.User + " belum terdaftar di sistem, silahkan ajukan user baru di helpdesk ivanty";
+            WarningMessenger("Belum terdaftar 👀", message);
             return;
         }
 
