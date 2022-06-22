@@ -50,8 +50,8 @@ namespace TSJ_CRI.Authentication
                 {
                     new Claim(ClaimTypes.Name, userSession.UserName),
                     new Claim(ClaimTypes.Role, userSession.Role),
-                    new Claim(ClaimTypes.StateOrProvince, userSession.Cabang)
-                }));
+                    new Claim("Cabang", userSession.Cabang)
+                }, "CustomAuth"));
             }
             else
             {

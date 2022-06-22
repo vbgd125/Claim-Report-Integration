@@ -1,0 +1,22 @@
+﻿@using System.Web
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+@inject NavigationManager _navigationManager
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var authState = await authenticationState;
+            var user = authState.User;
+            if (!user.Identity.IsAuthenticated)
+            {
+                _navigationManager.NavigateTo("/login", forceLoad: true);
+                await base.OnInitializedAsync();
+            }
+        }
+    }
+}
