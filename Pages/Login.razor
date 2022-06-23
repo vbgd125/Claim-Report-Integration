@@ -7,46 +7,65 @@
 @inject NavigationManager navManager
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
-<style>
+@*<style>
     body {
         background: #007bff;
         background: linear-gradient(to right, #0062E6, #33AEFF);
     }
-</style>
+</style>*@
 
-<div id="layoutAuthentication">
-    <div id="layoutAuthentication_content">
-        <main>
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5">
-                        <div class="card shadow-lg border-0 rounded-lg mt-4">
-                            <div class="card-header"><h3 class="text-center font-weight-light my-4">TSJ Claim Report</h3></div>
-                            <div class="card-body">
-                                <EditForm Model="@model">
-                                    <DataAnnotationsValidator />
-                                    <HxInputText Label="User login windows" CssClass="mb-3" @bind-Value="@model.User" InputGroupEndText="@domain_tsj" Placeholder="namadepan.namabelakang" />
-                                    <HxInputText Label="Password login windows" Type="InputType.Password" CssClass="mb-3" @bind-Value="@model.Pass" Placeholder="Password" />
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <HxSubmit Color="ThemeColor.Primary" OnValidClick="@(async () => await Auth(model))"><i class="bi bi-box-arrow-in-right"></i> Login</HxSubmit>
-                                        <a class="small" href="http://helpdeskepm.enseval.com/">Belum daftar ?</a>
-                                    </div>
-                                </EditForm>
-                            </div>
-                            <div class="card-footer text-center py-3">
-                                <div class="small">
-                                    &copy;@DateTime.Now.Year Tri Sapta Jaya.
+<section class="h-100 gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-xl-10">
+                <div class="card rounded-3 text-black">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="card-body p-md-5 mx-md-4">
+                                <div class="text-center">
+                                    <img src="custom_assets/img/tsj.png"
+                                         style="width: 185px;" alt="logo">
+                                    <h4 class="mt-1 mb-5 pb-1">Claim Report Integration</h4>
                                 </div>
+
+                                <form>
+                                    <p>Mohon login menggunakan user windows</p>
+                                    <EditForm Model="@model">
+                                        <DataAnnotationsValidator />
+                                        <div class="form-outline mb-4">
+                                            <HxInputText Label="User login windows" CssClass="mb-3" @bind-Value="@model.User" InputGroupEndText="@domain_tsj" Placeholder="namadepan.namabelakang" />
+                                        </div>
+
+                                        <div class="form-outline mb-4">
+                                            <HxInputText Label="Password login windows" Type="InputType.Password" CssClass="mb-3" @bind-Value="@model.Pass" Placeholder="Password" />
+                                        </div>
+
+                                        <div class="text-center pt-1 mb-5 pb-1">
+                                            <HxSubmit Color="ThemeColor.Primary" OnValidClick="@(async () => await Auth(model))"><i class="bi bi-box-arrow-in-right"></i> Login</HxSubmit>
+                                            Belum daftar ?<a class="small" href="http://helpdeskepm.enseval.com/"> AJUKAN DISINI</a>
+                                        </div>
+
+                                    </EditForm>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                            <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                                <h4 class="mb-4">Claim Report Integration</h4>
+                                <p class="medium mb-0">
+                                    Merupakan sistem integrasi yang berguna untuk memudahkan claim apabila ada ketidaksesuaian serta meminimalisir terjadinya kesalahan,
+                                    miskomunikasi internal maupun eksternal, mengurangi resiko ditolak klaim oleh ekspedisi,
+                                    memudahkan menelusuri barang kurang-lebih, hilang atau rusak, dan membantu evaluasi kinerja ekspedisi
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-</div>
-
-
+    
+</section>
 
 @code {
     private string domain_tsj = "@tsj.co.id";
