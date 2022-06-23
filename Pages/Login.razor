@@ -35,7 +35,7 @@
                             </div>
                             <div class="card-footer text-center py-3">
                                 <div class="small">
-                                    &copy; @DateTime.Now.Year Tri Sapta Jaya.
+                                    &copy;@DateTime.Now.Year Tri Sapta Jaya.
                                 </div>
                             </div>
                         </div>
@@ -78,40 +78,37 @@
     [Inject] protected IHxMessengerService Messenger { get; set; }
     private async void ErrorMessenger(string _title, string _message)
     {
-        //Messenger.Clear();
+        Messenger.Clear();
         Messenger.AddError(title: _title, message: _message);
-        await Task.Delay(15000);
-        //Messenger.Clear();
+        await Task.Delay(1000);
     }
 
     private async void WarningMessenger(string _title, string _message)
     {
-        //Messenger.Clear();
+        Messenger.Clear();
         Messenger.AddWarning(title: _title, message: _message);
-        await Task.Delay(15000);
-        //Messenger.Clear();
+        await Task.Delay(1000);
     }
 
-    private async Task Auth(UserLogin user)
+    private async Task Auth(UserLogin _user)
     {
         await Task.Delay(1);
-        var userAccount = await userAccountService.GetUser(user.User, user.Pass);
-        if (userAccount.Item1 == null)
+        var activeDirectory = userAccountService.WindowsAuth(_user.User, _user.Pass);
+        if (activeDirectory != null)
         {
-            if (userAccount.Item2 == null)
-            {
-                ErrorMessenger("Login error 😖", userAccount.Item3);
-                return;
-            }
-            else if (userAccount.Item3 == null)
-            {
-                ErrorMessenger("Login error 😖", userAccount.Item2);
-                return;
-            }
+            ErrorMessenger("Login windows gagal 😖", activeDirectory);
+            return;
         }
-        else if (userAccount.Item1 != null && userAccount.Item1.Count() == 0)
+
+        var userDb = await userAccountService.GetUser(_user.User, _user.Pass);
+        if (userDb.Item1 == null)
         {
-            string message = "User " + user.User + " belum terdaftar di sistem, silahkan ajukan user baru di helpdesk ivanty";
+            ErrorMessenger("Login database error 😖", userDb.Item2);
+            return;
+        }
+        else if (userDb.Item1 != null && userDb.Item1.Count() == 0)
+        {
+            string message = "User " + _user.User + " belum terdaftar di sistem, silahkan ajukan user baru di helpdesk ivanty";
             WarningMessenger("Belum terdaftar 👀", message);
             return;
         }
@@ -119,9 +116,9 @@
         var customAuthStateProvider = (CustomAuth)authStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(new UserSession
             {
-                UserName = userAccount.Item1.First().UserName,
-                Role = userAccount.Item1.First().Role,
-                Cabang = userAccount.Item1.First().Cabang
+                UserName = userDb.Item1.First().UserName,
+                Role = userDb.Item1.First().Role,
+                Cabang = userDb.Item1.First().Cabang
             });
         navManager.NavigateTo("/", true);
     }
