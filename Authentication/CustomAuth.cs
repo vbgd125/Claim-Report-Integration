@@ -52,14 +52,22 @@ namespace TSJ_CRI.Authentication
                     new Claim(ClaimTypes.Role, userSession.Role),
                     new Claim("Cabang", userSession.Cabang)
                 }, "CustomAuth"));
+                NotifyAuthenticationStateChanged();
             }
             else
             {
                 await _sessionStorage.DeleteAsync("UserSession");
                 claimsPrincipal = _anon;
+                NotifyAuthenticationStateChanged();
             }
 
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+            //NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
+
+        public void NotifyAuthenticationStateChanged()
+        {
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+
     }
 }

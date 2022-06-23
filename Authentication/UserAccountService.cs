@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace TSJ_CRI.Authentication
 {
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class UserAccountService
     {
         private readonly string ConnStrProd;

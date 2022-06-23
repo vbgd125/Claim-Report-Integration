@@ -30,17 +30,25 @@ namespace TSJ_CRI
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthenticationCore();
+            services.AddAuthentication();
+            services.AddAuthorization();
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHxServices();
             services.AddHxMessenger();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserAccountService>();
+
             services.AddScoped<ProtectedSessionStorage>();
-            services.AddScoped<AuthenticationStateProvider, CustomAuth>();
+            //services.AddScoped<AuthenticationStateProvider, CustomAuth>();
+
+            services.AddScoped<CustomAuth>();
+            services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuth>());
+
             services.AddScoped<NotificationService>();
         }
 
@@ -62,9 +70,6 @@ namespace TSJ_CRI
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
