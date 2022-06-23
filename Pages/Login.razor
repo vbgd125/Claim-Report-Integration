@@ -2,6 +2,7 @@
 @layout EmptyLayout
 @using System.ComponentModel.DataAnnotations
 @using TSJ_CRI.Authentication
+@using TSJ_CRI.Helpers
 @inject UserAccountService userAccountService
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
@@ -75,11 +76,10 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await authenticationState;
-        var user = authState.User;
-        base.OnInitialized();
-        if (user.Identity.IsAuthenticated)
+        if (authState.User.Identity.IsAuthenticated)
         {
-            navManager.NavigateTo("/", true);
+            var returnUrl = navManager.QueryString("returnUrl") ?? "";
+            navManager.NavigateTo(returnUrl, forceLoad:true);
         }
     }
 
@@ -139,6 +139,8 @@
                 Role = userDb.Item1.First().Role,
                 Cabang = userDb.Item1.First().Cabang
             });
-        navManager.NavigateTo("/", true);
+        
+        var returnUrl = navManager.QueryString("returnUrl") ?? "";
+        navManager.NavigateTo(returnUrl, forceLoad:true);
     }
 }
