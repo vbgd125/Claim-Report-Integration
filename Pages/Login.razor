@@ -21,7 +21,7 @@
                 <div class="card rounded-3 text-black">
                     <div class="row g-0">
                         <div class="col-lg-6">
-                            <div class="card-body p-md-5 mx-md-4">
+                            <div class="card-body md-5">
                                 <div class="text-center">
                                     <img src="custom_assets/img/tsj.png"
                                          style="width: 185px;" alt="logo">
@@ -32,15 +32,15 @@
                                     <p>Mohon login menggunakan user windows</p>
                                     <EditForm Model="@model">
                                         <DataAnnotationsValidator />
-                                        <div class="form-outline mb-4">
+                                        <div class="form-outline">
                                             <HxInputText Label="User login windows" CssClass="mb-3" @bind-Value="@model.User" InputGroupEndText="@domain_tsj" Placeholder="namadepan.namabelakang" />
                                         </div>
 
-                                        <div class="form-outline mb-4">
+                                        <div class="form-outline">
                                             <HxInputText Label="Password login windows" Type="InputType.Password" CssClass="mb-3" @bind-Value="@model.Pass" Placeholder="Password" />
                                         </div>
 
-                                        <div class="text-center pt-1 mb-5 pb-1">
+                                        <div class="text-center pt-1 pb-1">
                                             <HxSubmit Color="ThemeColor.Primary" OnValidClick="@(async () => await Auth(model))"><i class="bi bi-box-arrow-in-right"></i> Login</HxSubmit>
                                             Belum daftar ?<a class="small" href="http://helpdeskepm.enseval.com/"> AJUKAN DISINI</a>
                                         </div>
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
-                            <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                            <div class="text-white px-3 py-4 p-md-5">
                                 <h4 class="mb-4">Claim Report Integration</h4>
                                 <p class="medium mb-0">
                                     Merupakan sistem integrasi yang berguna untuk memudahkan claim apabila ada ketidaksesuaian serta meminimalisir terjadinya kesalahan,
