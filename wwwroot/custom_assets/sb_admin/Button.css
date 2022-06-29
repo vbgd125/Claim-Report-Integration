@@ -1,0 +1,415 @@
+@import url(https://fonts.googleapis.com/css?family=Kaushan+Script);
+
+.button, .ones, .two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .eleven, .twelve, .thirteen, .fourteen, .fifteen, .sixteen {
+    width: 200px;
+    height: 50px;
+    text-align: center;
+    margin-bottom: 10px;
+    border: 4px solid white;
+    border-radius: 10px;
+    color: #d1e3ff;
+    font-size: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.button a, .ones a, .two a, .three a, .four a, .five a, .six a, .seven a, .eight a, .nine a, .ten a, .eleven a, .twelve a, .thirteen a, .fourteen a, .fifteen a, .sixteen a {
+    color: white;
+    text-decoration: none;
+    line-height: 50px;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.button .first, .ones .first, .two .first, .three .first, .four .first, .five .first, .six .first, .seven .first, .eight .first, .nine .first, .ten .first, .eleven .first, .twelve .first, .thirteen .first, .fourteen .first, .fifteen .first, .sixteen .first, .button .second, .ones .second, .two .second, .three .second, .four .second, .five .second, .six .second, .seven .second, .eight .second, .nine .second, .ten .second, .eleven .second, .twelve .second, .thirteen .second, .fourteen .second, .fifteen .second, .sixteen .second {
+    width: 200px;
+    display: inline-block;
+    float: left;
+}
+
+.ones, .two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .eleven, .twelve, .thirteen, .fourteen, .fifteen, .sixteen {
+    transition: all 0.7s;
+}
+
+.style1, .ones {
+    background: linear-gradient(to left, #514575 200px, #0059b3 200px);
+    background-size: 400px 50px;
+    background-repeat: no-repeat;
+}
+
+.style1, .two, .three, .four {
+    background: linear-gradient(to left, #0059b3 200px, #514575 200px);
+    background-size: 400px 50px;
+    background-repeat: no-repeat;
+}
+
+.style1 .elong, .ones .elong, .two .elong, .three .elong, .four .elong {
+    position: relative;
+    transition: all 0.5s;
+}
+
+.style2 .elong, .five .elong, .six .elong, .seven .elong, .eight .elong {
+    position: relative;
+    transition: all 0.5s;
+}
+
+.style2 .elong .second, .five .elong .second, .six .elong .second, .seven .elong .second, .eight .elong .second {
+    position: relative;
+}
+
+.style3, .nine, .ten, .eleven, .twelve {
+    background-size: 800px 200px;
+}
+
+.style3 .second a, .nine .second a, .ten .second a, .eleven .second a, .twelve .second a {
+    color: #d1e3ff;
+    letter-spacing: 2px;
+}
+
+.style3 .elong, .nine .elong, .ten .elong, .eleven .elong, .twelve .elong {
+    transition: all 0.5s;
+    position: relative;
+}
+
+.grad1, .five {
+    background: linear-gradient(to bottom right, #3bb878 150px, #f7977a 150px);
+}
+
+.grad2, .six {
+    background: linear-gradient(to bottom left, #3bb878 150px, #f7977a 150px);
+}
+
+.grad3, .seven {
+    background: linear-gradient(to top right, #3bb878 150px, #f7977a 150px);
+}
+
+.grad4, .eight {
+    background: linear-gradient(to top left, #3bb878 150px, #f7977a 150px);
+}
+
+.grad1, .five, .grad2, .six, .grad3, .seven, .grad4, .eight {
+    background-size: 300px 200px;
+    background-repeat: no-repeat;
+}
+
+.grad5 {
+    background: repeating-linear-gradient(to bottom right, #f7977a, #f7977a 20px, #3bb878 20px, #3bb878 40px);
+}
+
+.grad6 {
+    background: repeating-linear-gradient(to bottom left, #f7977a, #f7977a 20px, #3bb878 20px, #3bb878 40px);
+}
+
+.grad7 {
+    background: repeating-linear-gradient(to bottom right, #f7977a, #f7977a 20px, #3bb878 20px, #3bb878 40px);
+}
+
+.grad8 {
+    background: repeating-linear-gradient(to bottom left, #f7977a, #f7977a 20px, #3bb878 20px, #3bb878 40px);
+}
+
+.ones {
+    background-position: 0px 0px;
+}
+
+.ones .elong {
+    width: 400px;
+    left: 0px;
+}
+
+.two {
+    background-position: 0px 50px;
+}
+
+.two .elong {
+    width: 200px;
+    top: 0px;
+}
+
+.three {
+    background-position: -200px 0px;
+}
+
+.three .elong {
+    width: 400px;
+    left: -200px;
+}
+
+.four {
+    background-position: 0px -50px;
+}
+
+.four .elong {
+    width: 200px;
+    top: -50px;
+}
+
+.two:hover, .two:focus, .three:hover, .three:focus, .four:hover, .four:focus {
+    background-position: 0px 0px;
+}
+
+.ones:hover, .ones:focus{
+    background-position: -200px 0px;
+}
+
+.ones:hover .elong, .ones:focus .elong {
+    left: -200px;
+}
+
+.two:hover .elong, .two:focus .elong {
+    top: -50px;
+}
+
+.three:hover .elong, .three:focus .elong {
+    left: 0px;
+}
+
+.four:hover .elong, .four:focus .elong {
+    top: 0px;
+}
+
+.five {
+    background-position: -150px -150px;
+}
+
+.five .elong {
+    left: -200px;
+    top: -50px;
+}
+
+.five .elong .second {
+    left: 200px;
+}
+
+.six {
+    background-position: 150px -150px;
+}
+
+.six .elong {
+    left: 200px;
+    top: -50px;
+}
+
+.six .elong .second {
+    left: -200px;
+}
+
+.seven {
+    background-position: -150px 0px;
+}
+
+.seven .elong {
+    left: 0px;
+    top: 0px;
+}
+
+.seven .elong .second {
+    left: -200px;
+}
+
+.eight {
+    background-position: 50px 0px;
+}
+
+.eight .elong {
+    left: 0px;
+    top: 0px;
+}
+
+.eight .elong .second {
+    left: 200px;
+}
+
+.five:hover, .five:focus {
+    background-position: 0px 0px;
+}
+
+.five:hover .elong, .five:focus .elong {
+    top: 0px;
+    left: 0px;
+}
+
+.six:hover, .six:focus {
+    background-position: -100px 0px;
+}
+
+.six:hover .elong, .six:focus .elong {
+    top: 0px;
+    left: 0px;
+}
+
+.seven:hover, seven:focus {
+    background-position: 0px -150px;
+}
+
+.seven:hover .elong, .seven:focus .elong {
+    top: -50px;
+    left: 200px;
+}
+
+.eight:hover, eight:focus {
+    background-position: -100px -150px;
+}
+
+.eight:hover .elong, .eight:focus .elong {
+    top: -50px;
+    left: -200px;
+}
+
+.nine .elong {
+    width: 400px;
+    left: 0px;
+}
+
+.ten .elong {
+    width: 200px;
+    top: 0px;
+}
+
+.eleven .elong {
+    width: 400px;
+    left: -200px;
+}
+
+.eleven .secondary {
+    color: blue;
+}
+
+.twelve .elong {
+    width: 200px;
+    top: -50px;
+}
+
+.nine:hover, nine:focus, .ten:hover, .ten:focus, .eleven:hover, .eleven:focus, .twelve:hover, .twelve:focus {
+    border: 4px solid #3bb878;
+}
+
+.nine:hover .elong, .nine:focus .elong {
+    left: -200px;
+}
+
+.ten:hover .elong, .ten:focus .elong {
+    top: -50px;
+}
+
+.eleven:hover .elong, .eleven:focus .elong {
+    left: 0px;
+}
+
+.twelve:hover .elong, .twelve:focus .elong {
+    top: 0px;
+}
+
+.thirteen .first {
+    opacity: 1;
+}
+
+.thirteen .second {
+    position: relative;
+    top: -50px;
+    opacity: 0;
+}
+
+.thirteen:hover, thirteen:focus {
+    transform: rotate(3deg);
+}
+
+.thirteen:hover .first, thirteen:focus .first {
+    opacity: 0;
+}
+
+.thirteen:hover .second, thirteen:focus .second {
+    opacity: 1;
+}
+
+.fourteen .first {
+    opacity: 1;
+}
+
+.fourteen .second {
+    position: relative;
+    top: -50px;
+    opacity: 0;
+}
+
+.fourteen:hover, fourteen:focus {
+    transform: rotate(-3deg);
+}
+
+.fourteen:hover .first, fourteen:focus .first {
+    opacity: 0;
+}
+
+.fourteen:hover .second, fourteen:focus .second {
+    opacity: 1;
+}
+
+.fifteen .elong {
+    width: 400px;
+}
+
+.fifteen .first, .fifteen .second {
+    transition: all 0.5s linear;
+}
+
+.fifteen .first {
+    position: relative;
+    left: 0px;
+}
+
+.fifteen .second {
+    transform: rotateY(90deg);
+    position: relative;
+    left: -100px;
+    top: 0px;
+}
+
+.fifteen .second a {
+    color: #3bb878;
+    letter-spacing: 2px;
+}
+
+.fifteen:hover .first {
+    transform: rotateY(90deg);
+    left: -100px;
+    transform-style: preserve-3d;
+}
+
+.fifteen:hover .second {
+    transform: rotateY(0deg);
+    left: -200px;
+    transform-style: preserve-3d;
+}
+
+.sixteen .first, .sixteen .second {
+    transition: all 0.5s linear;
+}
+
+.sixteen .first {
+    position: relative;
+    top: 0px;
+}
+
+.sixteen .second {
+    transform: rotateX(90deg);
+    position: relative;
+    top: -30px;
+}
+
+.sixteen .second a {
+    color: #3bb878;
+    letter-spacing: 2px;
+}
+
+.sixteen:hover .first {
+    transform: rotateX(90deg);
+    top: -20px;
+    transform-style: preserve-3d;
+}
+
+.sixteen:hover .second {
+    transform: rotateX(0deg);
+    top: -50px;
+    transform-style: preserve-3d;
+}

@@ -1,27 +1,63 @@
 ﻿@page "/counter"
 
-<h1>Counter</h1>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <h1 style="text-align: center;">Silahkan Memilih Claim</h1>
+    <p class="lead" style="text-align: center;">pilihan menu memiliki bentuk form dan pengajuan yang berbeda </p>
+    <p class="lead" style="text-align: center;">mohon dipastikan terlebih dahulu dan disesuai dengan kebutuhan </p>
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-6 d-flex justify-content-center text-center">
+                <div class='ones'>
+                    <div class='elong'>
+                        <div class='first'>
+                            <a href='#'>Claim Produk 1</a>
+                        </div>
+                        <div class='second'>
+                            <a class='secondary' href='#'>Hilang/Rusak</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 d-flex justify-content-center text-center">
+                <div class='three'>
+                    <div class='elong'>
+                        <div class='first'>
+                            <a href='#'>Tidak Sesuai</a>
+                        </div>
+                        <div class='second'>
+                            <a class='secondary' href='#'>Claim Produk 2</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<p>Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
-@code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
+    @code {
+        private int currentCount = 0;
+
+        private void IncrementCount()
+        {
+            currentCount++;
+        }
+
+        [CascadingParameter]
+        private Task<AuthenticationState> authenticationState { get; set; }
+
+        private async Task DisplayAlert()
+        {
+            var authState = await authenticationState;
+            var message = $"Hello {authState.User.Identity.Name}";
+            //await js.InvokeVoidAsync("alert", message);
+        }
+
     }
-
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
-
-    private async Task DisplayAlert()
-    {
-        var authState = await authenticationState;
-        var message = $"Hello {authState.User.Identity.Name}";
-        //await js.InvokeVoidAsync("alert", message);
-    }
-
-}
