@@ -6,6 +6,14 @@
 <div class="page">
     <div class="sidebar">
         <NavMenu />
+        <AuthorizeView>
+            <Authorized>
+                <div id="logout_sidebar_button" class="btn btn-light">
+                    <a data-toggle="modal" data-target="#exampleModalCenter" href="#exampleModalCenter" style="color:darksalmon;">Logout</a>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        
     </div>
 
     <div class="main">
@@ -13,11 +21,8 @@
 
             <AuthorizeView>
                 <Authorized>
-                    <div class="col-11">
+                    <div class="col-12">
                         Hello, <b>@context.User.Identity.Name!</b>
-                    </div>
-                    <div class="col-1">
-                        <a data-toggle="modal" data-target="#exampleModalCenter" href="#exampleModalCenter">Logout</a>
                     </div>
                 </Authorized>
                 <NotAuthorized>
@@ -28,25 +33,27 @@
         </div>
 
         <div class="content px-4">
-            @Body
+            <div class="scroll">
+                @Body
+            </div>
         </div>
 
         @*modal*@
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="examplemodalcentertitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Kamu akan keluar dari TSJ_CRI</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title" id="examplemodallongtitle">kamu akan keluar dari tsj_cri</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p class="lead"> Apakah bapak atau ibu yakin? </p>
+                        <p class="lead"> apakah bapak atau ibu yakin? </p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tidak</button>
-                        <a @onclick="Logout" href="javascript:void(0)" class="btn btn-primary" role="button" aria-disabled="false">Yakin</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">tidak</button>
+                        <a @onclick="Logout" href="javascript:void(0)" class="btn btn-primary" role="button" aria-disabled="false">yakin</a>
                     </div>
                 </div>
             </div>

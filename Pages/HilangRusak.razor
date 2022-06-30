@@ -1,0 +1,60 @@
+﻿@page "/hilangrusak"
+@inject IJSRuntime JS
+
+<div class="pb-3">
+    <br />
+    <h1>Form Berita Acara Kehilangan atau Kerusakan Produk</h1>
+    <br />
+    <p class="lead"> Silahkan Diisi Dengan Data Yang Sebenarnya</p>
+    <br />
+    <EditForm Model="model">
+        <DataAnnotationsValidator />
+        <HxFormValue Label="Cabang" Value="@cabang" />
+        <HxInputDate Label="Terjadi Kehilangan atau Kerusakan pada tanggal" @bind-Value="@tglrusak" />
+        <HxInputText Label="Nama Ekspedisi" @bind-Value="@namaekspedisi" Placeholder="ex: PT.Tri Sapta Jaya" />
+        <HxInputText @bind-Value="@emailekspedisi" Label="Email Ekspedisi" InputMode="InputMode.Email" />
+        <HxInputText @bind-Value="@nokendaraan" Label="No Polisi Kendaraan" />
+        <HxInputText @bind-Value="@namasupir" Label="Nama Pengemudi" />
+        <HxInputText @bind-Value="@nopengiriman" Label="No Pengiriman" Hint="SPK/Faktur/Shipment/Do/TT" />
+        <HxInputDate Label="Tanggal Pengiriman" @bind-Value="@tglkirim" />
+        <HxInputText @bind-Value="@pengirimandari" Label="Pengiriman Dari" />
+        <HxInputText @bind-Value="@pengirimanke" Label="Tujuan Pengiriman" />
+        <HxInputText @bind-Value="@nodokument" Label="Nomer Dokumen Surat Jalan" Hint="AWB" />
+        <HxInputNumber @bind-Value="@koli" Label="Jumlah Koli" />
+        @*<HxSubmit Color="ThemeColor.Primary" OnValidClick="@()">
+            <i class="bi bi-box-arrow-in-right"></i> Submit dan Lanjutkan Detail</HxSubmit>*@
+    </EditForm>
+</div>
+@code {
+    private string cabang = null;
+    public string namaekspedisi { get; set; }
+    public string emailekspedisi { get; set; }
+    public string nokendaraan { get; set; }
+    public string namasupir { get; set; }
+    public string nopengiriman { get; set; }
+    public string pengirimandari { get; set; }
+    public string pengirimanke { get; set; }
+    public string nodokument { get; set; }
+    public int koli { get; set; }
+    public DateTime tglrusak { get; set; }
+    public DateTime tglkirim { get; set; }
+
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            cabang = authState.User.FindFirst("Cabang").Value;
+        }
+    }
+
+    protected FormHilang model = new FormHilang();
+    public class FormHilang
+    {
+
+    }
+}

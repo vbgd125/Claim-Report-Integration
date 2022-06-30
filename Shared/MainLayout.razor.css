@@ -26,6 +26,13 @@
         margin-left: 1.5rem;
     }
 
+#logout_sidebar_button {
+    position: absolute;
+    display: inline-block;
+    bottom: 0;
+    width:250px;
+}
+
     .top-row a:first-child {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -43,6 +50,11 @@
     .top-row a, .top-row .btn-link {
         margin-left: 0;
     }
+
+    #logout_sidebar_button {
+        position: inherit;
+        width: 100%;
+    }
 }
 
 @media (min-width: 641px) {
@@ -52,10 +64,11 @@
 
     .sidebar {
         width: 250px;
-        height: 100vh;
+        min-height: 100vh;
         position: sticky;
         bottom: 0 !important;
     }
+
 
     .top-row {
         position: sticky;

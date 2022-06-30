@@ -4,15 +4,14 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    @*@if (!context.User.Identity.IsAuthenticated)
+                    @if (!context.User.Identity.IsAuthenticated)
                     {
-                        <LoginRedirect />
+                        <LoginRedirect/>
                     }
                     else
                     {
                         <p>You are not authorized to access this resource.</p>
-                    }*@
-                    <LoginRedirect />
+                    }
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>
