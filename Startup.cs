@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Syncfusion.Blazor;
 using TSJ_CRI.Data;
 using TSJ_CRI.Authentication;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
@@ -36,12 +37,14 @@ namespace TSJ_CRI
             services.AddAuthentication();
             services.AddAuthorization();
 
+            services.AddSyncfusionBlazor();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHxServices();
             services.AddHxMessenger();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserAccountService>();
+            services.AddSingleton<UserManageService>();
 
             services.AddScoped<ProtectedSessionStorage>();
             //services.AddScoped<AuthenticationStateProvider, CustomAuth>();
@@ -55,6 +58,8 @@ namespace TSJ_CRI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjY5NzE2QDMyMzAyZTMyMmUzME1LTUhpa21tejZEV0dsRGVrM1VDSkEvUjV0Q0UwQ2p6bVdvZlFPRWhYK009");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

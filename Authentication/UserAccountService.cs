@@ -25,9 +25,9 @@ namespace TSJ_CRI.Authentication
         {
             try
             {
-                var sql = "SELECT username_window username, price_level role, '3200' cabang " +
-                        "FROM PRICE_USERS " +
-                        "where username_window = @username";
+                var sql = "SELECT username username, roles role, Org_ID cabang " +
+                        "FROM User_CRI " +
+                        "where username = @username and status = '1'";
                 var conn = new SqlConnection(ConnStrProd);
                 var parameters = new { username = _username };
                 var user = await conn.QueryAsync<UserAccount>(sql, parameters);

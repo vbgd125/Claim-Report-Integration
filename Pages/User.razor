@@ -1,8 +1,96 @@
 ﻿@page "/User"
+@using System.ComponentModel.DataAnnotations
+@using TSJ_CRI.Data
+@inject UserManageService UserManage2Service
+@attribute [Authorize(Roles = "1")]
+@inject IJSRuntime js
 
 <br />
-<h3>User</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <h3>User Management</h3>
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div class="float-left float-right">
+                <HxButton Text="New User" OnClick="HandleShowClick" Icon="BootstrapIcon.PersonPlusFill" Color="ThemeColor.Light" style="max-width:100%;"></HxButton>
+            </div>
+        </div>
+    </div>
+</div>
 
-@code {
+<br />
 
-}
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <SfGrid DataSource="@a" AllowSorting="true" AllowPaging="true" AllowTextWrap="true">
+                <GridPageSettings PageSize="10"></GridPageSettings>
+                <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
+                <GridColumns>
+                    <GridColumn Field="@nameof(UserManage.id)" HeaderText="No"></GridColumn>
+                    <GridColumn Field=@nameof(UserManage.username) HeaderText="User Name"></GridColumn>
+                    <GridColumn Field="@nameof(UserManage.email)" HeaderText="Email"></GridColumn>
+                    <GridColumn Field="@nameof(UserManage.org_id)" HeaderText="Cabang"></GridColumn>
+                    <GridColumn Field="@nameof(UserManage.status)" HeaderText="Status">
+                        <Template>
+                            @{
+                                var categori = (context as UserManage);
+                                @if (categori.status == "1")
+                                {
+                                    <div>
+                                        <span class="bg-success text-white">Active</span>
+                                    </div>
+                                }
+                                @if (categori.status == "0")
+                                {
+                                    <div class="title-temp2 complete">
+                                        <span class="complete-font">@categori.status</span>
+                                    </div>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+</div>
+
+            <HxModal @ref="myModal" Title="Modal title" Scrollable="true" UseStaticBackdrop="false">
+                <BodyTemplate>
+                    <p style="margin-bottom: 100vh;">
+                        This is some placeholder content to show the scrolling behavior for modals. Instead of repeating the text the modal, we use an inline style set a minimum height, thereby extending the length of the overall modal and demonstrating the overflow scrolling. When content becomes longer than the height of the viewport, scrolling will move the modal as needed.
+                    </p>
+                    <p>This content should appear at the bottom after you scroll.</p>
+                </BodyTemplate>
+                <FooterTemplate>
+                    <HxButton OnClick="HandleHideClick" Color="ThemeColor.Primary">Close</HxButton>
+                </FooterTemplate>
+            </HxModal>
+
+            @code {
+
+                List<UserManage> a = new List<UserManage>();
+
+                protected override async Task OnInitializedAsync()
+                {
+                    a = UserManage2Service.GetUser().ToList();
+                }
+
+                private HxModal myModal;
+                private async Task HandleShowClick()
+                {
+                    await myModal.ShowAsync();
+                }
+
+                private async Task HandleHideClick()
+                {
+                    await myModal.HideAsync();
+                }
+
+
+
+
+            }
