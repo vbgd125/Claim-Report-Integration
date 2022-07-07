@@ -9,8 +9,10 @@ using TSJ_CRI.Authentication;
 
 namespace TSJ_CRI.Data
 {
+
     public class UserManageService
     {
+
         private string ConnStrProd;
         public UserManageService(IConfiguration config)
         {
@@ -25,7 +27,7 @@ namespace TSJ_CRI.Data
                 using (var connection = new SqlConnection(ConnStrProd))
                 {
                     connection.Open();
-                    users = connection.Query<UserManage>("SELECT user_id id ,username username, email, status, roles role, Org_ID org_id " +
+                    users = connection.Query<UserManage>("SELECT user_id id ,username username, email, status, roles, Org_ID org_id " +
                                     "FROM User_CRI " +
                                     "WHERE Org_id != 81").ToList();
                     connection.Close();
@@ -38,35 +40,38 @@ namespace TSJ_CRI.Data
             } 
         }
 
-        public async Task<string> UpdateUser(UserManage _user)
+        public (int,string) UpdateUser(UserManage _user)
         {
-            var sql = @"update User_CRI 
-                            set username = @username
-                            ,email = @email
-                            ,org_id = @org_id
-                            ,roles = @roles
-                            ,status = @status
-                            where id = @id";
-            var parameters = new
+            using (var connection = new SqlConnection(ConnStrProd))
             {
-                id = _user.id,
-                org_id = _user.org_id,
-                status = _user.status,
-                roles = _user.roles,
-                email = _user.email,
-                username = _user.username
+                try
+                {
+                    connection.Open();
+                    var parameters = new
+                    {
+                        id = _user.id,
+                        org_id = _user.org_id,
+                        status = _user.status,
+                        roles = _user.roles,
+                        email = _user.email,
+                        username = _user.username
 
-            };
-            try
-            {
-                var conn = new SqlConnection(ConnStrProd);
-                var account = await conn.QueryAsync<UserManage>(sql,parameters);
-                return (null);
-            }
-            catch (Exception ex)
-            {
-                return ex.Message.ToString();   
-            }
+                    };
+                    var sql = connection.Execute("update User_CRI" +
+                                " set username = @username" +
+                                ", email = @email" +
+                                ", org_id = @org_id" +
+                                ", roles = @roles" +
+                                ", status = @status" +
+                                " where user_id = @id", parameters);
+                    connection.Close();
+                    return (sql, "");
+                }
+                catch (Exception ex)
+                {
+                    return (0, ex.Message.ToString());
+                }
+            } 
         }
 
         public async Task<string> InsertUser(UserNew _user)
