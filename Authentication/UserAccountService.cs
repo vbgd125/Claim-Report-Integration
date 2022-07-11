@@ -1,13 +1,10 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.DirectoryServices;
 using System.DirectoryServices.Protocols;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 

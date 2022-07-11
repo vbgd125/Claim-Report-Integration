@@ -60,8 +60,6 @@ namespace TSJ_CRI.Authentication
                 claimsPrincipal = _anon;
                 NotifyAuthenticationStateChanged();
             }
-
-            //NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
 
         public void NotifyAuthenticationStateChanged()

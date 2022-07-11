@@ -47,8 +47,6 @@ namespace TSJ_CRI
             services.AddSingleton<UserManageService>();
 
             services.AddScoped<ProtectedSessionStorage>();
-            //services.AddScoped<AuthenticationStateProvider, CustomAuth>();
-
             services.AddScoped<CustomAuth>();
             services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuth>());
 

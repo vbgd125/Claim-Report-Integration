@@ -5,7 +5,6 @@
 @code {
     protected override void OnInitialized()
     {
-        //_navigationManager.NavigateTo("/Login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}", forceLoad: true);
         _navigationManager.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(_navigationManager.Uri)}");
     }
 }
