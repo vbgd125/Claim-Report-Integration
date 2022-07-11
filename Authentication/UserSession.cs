@@ -2,8 +2,11 @@
 {
     public class UserSession
     {
-        public string UserName { get; set; }
-        public string Role { get; set; }
-        public string Cabang { get; set; }
+        public int userid { get; set; }
+        public string username { get; set; }
+        public string email { get; set; }
+        public string roles { get; set; }
+        public string org_id { get; set; }
+        public string status { get; set; }
     }
 }

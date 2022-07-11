@@ -18,16 +18,16 @@ namespace TSJ_CRI.Authentication
             ConnStrProd = config.GetConnectionString("103ConnTest");
         }
 
-        public async Task<(IEnumerable<UserAccount>, string)> GetUser(string _username, string _password)
+        public async Task<(IEnumerable<UserSession>, string)> GetUser(string _username)
         {
             try
             {
-                var sql = "SELECT username username, roles role, Org_ID cabang " +
+                var sql = "SELECT user_id, username, email, roles, org_id, status " +
                         "FROM User_CRI " +
-                        "where username = @username and status = '1'";
+                        "where username = @username";
                 var conn = new SqlConnection(ConnStrProd);
                 var parameters = new { username = _username };
-                var user = await conn.QueryAsync<UserAccount>(sql, parameters);
+                var user = await conn.QueryAsync<UserSession>(sql, parameters);
                 return (user, null);
             }
             catch (Exception ex)

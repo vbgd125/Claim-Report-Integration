@@ -28,9 +28,14 @@ namespace TSJ_CRI.Authentication
                 }
                 var ClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, userSession.UserName),
-                    new Claim(ClaimTypes.Role, userSession.Role),
-                    new Claim("Cabang", userSession.Cabang)
+                    new Claim(ClaimTypes.Name, userSession.username),
+                    new Claim(ClaimTypes.Role, userSession.roles),
+                    new Claim("userid", userSession.userid.ToString()),
+                    new Claim("username", userSession.username),
+                    new Claim("email", userSession.email),
+                    new Claim("roles", userSession.roles),
+                    new Claim("org_id", userSession.org_id),
+                    new Claim("status", userSession.status)
                 }, "CustomAuth"));
                 return await Task.FromResult(new AuthenticationState(ClaimsPrincipal));
             }
@@ -48,9 +53,14 @@ namespace TSJ_CRI.Authentication
                 await _sessionStorage.SetAsync("UserSession", userSession);
                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, userSession.UserName),
-                    new Claim(ClaimTypes.Role, userSession.Role),
-                    new Claim("Cabang", userSession.Cabang)
+                    new Claim(ClaimTypes.Name, userSession.username),
+                    new Claim(ClaimTypes.Role, userSession.roles),
+                    new Claim("userid", userSession.userid.ToString()),
+                    new Claim("username", userSession.username),
+                    new Claim("email", userSession.email),
+                    new Claim("roles", userSession.roles),
+                    new Claim("org_id", userSession.org_id),
+                    new Claim("status", userSession.status)
                 }, "CustomAuth"));
                 NotifyAuthenticationStateChanged();
             }

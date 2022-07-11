@@ -120,7 +120,7 @@
             return;
         }
 
-        var userDb = await userAccountService.GetUser(_user.User, _user.Pass);
+        var userDb = await userAccountService.GetUser(_user.User);
         if (userDb.Item1 == null)
         {
             ErrorMessenger("Login database error 😖", userDb.Item2);
@@ -136,9 +136,12 @@
         var customAuthStateProvider = (CustomAuth)authStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(new UserSession
             {
-                UserName = userDb.Item1.First().UserName,
-                Role = userDb.Item1.First().Role,
-                Cabang = userDb.Item1.First().Cabang
+                userid = userDb.Item1.First().userid,
+                username = userDb.Item1.First().username,
+                email = userDb.Item1.First().email,
+                roles = userDb.Item1.First().roles,
+                org_id = userDb.Item1.First().org_id,
+                status = userDb.Item1.First().status
             });
         
         var returnUrl = navManager.QueryString("returnUrl") ?? "";

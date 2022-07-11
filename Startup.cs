@@ -42,7 +42,6 @@ namespace TSJ_CRI
             services.AddServerSideBlazor();
             services.AddHxServices();
             services.AddHxMessenger();
-            services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserAccountService>();
             services.AddSingleton<UserManageService>();
 
