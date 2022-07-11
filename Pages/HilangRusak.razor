@@ -65,7 +65,7 @@
         var authState = await authenticationState;
         if (authState.User.Identity.IsAuthenticated)
         {
-            cabang = authState.User.FindFirst("Cabang").Value;
+            cabang = authState.User.FindFirst("org_id").Value;
         }
     }
 

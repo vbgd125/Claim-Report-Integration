@@ -1,22 +1,14 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Syncfusion.Blazor;
 using TSJ_CRI.Data;
 using TSJ_CRI.Authentication;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Radzen;
 using Havit.Blazor.Components.Web;
-using Havit.Blazor.Components.Web.Bootstrap;
 
 namespace TSJ_CRI
 {
@@ -37,19 +29,18 @@ namespace TSJ_CRI
             services.AddAuthentication();
             services.AddAuthorization();
 
-            services.AddSyncfusionBlazor();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHxServices();
             services.AddHxMessenger();
+            services.AddSyncfusionBlazor();
+
             services.AddSingleton<UserAccountService>();
             services.AddSingleton<UserManageService>();
 
             services.AddScoped<ProtectedSessionStorage>();
             services.AddScoped<CustomAuth>();
             services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuth>());
-
-            services.AddScoped<NotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
