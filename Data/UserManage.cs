@@ -14,7 +14,7 @@ namespace TSJ_CRI.Data
 
     public class Cabang 
     {
-        public int org_id { get; set; }
+        public string org_id { get; set; }
         public string branch_name { get; set; }
     }
 

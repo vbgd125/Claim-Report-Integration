@@ -1,6 +1,7 @@
 ﻿@page "/User"
 @using System.ComponentModel.DataAnnotations
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.DropDowns
 @using TSJ_CRI.Data
 @inject UserManageService UserManage2Service
 @attribute [Authorize(Roles = "1")]
@@ -22,67 +23,81 @@
 
 <br />
 
+@{
+    var SpecificCols = (new string[] { "username" });
+    var Tool = (new List<string>() { "Search" });
+}
+
 <div class="col-lg-12 control-section">
     <div class="content-wrapper">
         <div class="row">
             <div class="content-wrapper e-bigger e-adaptive-demo">
                 <div class="e-mobile-layout">
                     <div class="e-mobile-content">
-                        <SfGrid DataSource="@a" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" TValue="UserManage">
-                            <GridEditSettings AllowEditing="true" AllowDeleting="true" AllowAdding="true"></GridEditSettings>
-                            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UserManage"></GridEvents>    
+                        <SfGrid DataSource="@a" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" Toolbar="@Tool" TValue="UserManage">
+                            <GridSearchSettings Fields=@SpecificCols IgnoreCase="true"></GridSearchSettings>
+                            <GridEditSettings AllowEditing="true" AllowAdding="true"></GridEditSettings>
+                            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UserManage"></GridEvents>
                             <GridPageSettings PageSize="10"></GridPageSettings>
-                                <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
-                                <GridColumns>
-                                    <GridColumn Field="@nameof(UserManage.id)" HeaderText="No" IsPrimaryKey="true"></GridColumn>
-                                    <GridColumn Field="@nameof(UserManage.username)" HeaderText="User Name"></GridColumn>
-                                    <GridColumn Field="@nameof(UserManage.email)" HeaderText="Email"></GridColumn>
-                                    <GridColumn Field="@nameof(UserManage.org_id)" HeaderText="Cabang"></GridColumn>
-                                    <GridColumn Field="@nameof(UserManage.roles)" HeaderText="Jabatan">
-                                        <Template>
-                                            @{
-                                                var categori = (context as UserManage);
-                                                @if (categori.roles == "1")
-                                                {
-                                                    <div>
-                                                        Admin
-                                                    </div>
-                                                }
-                                                @if (categori.roles == "2")
-                                                {
-                                                    <div>
-                                                        Pengisi
-                                                    </div>
-                                                }
+                            <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
+                            <GridColumns>
+                                <GridColumn Field="@nameof(UserManage.id)" HeaderText="No" IsPrimaryKey="true"></GridColumn>
+                                <GridColumn Field="@nameof(UserManage.username)" HeaderText="User Name"></GridColumn>
+                                <GridColumn Field="@nameof(UserManage.email)" HeaderText="Email"></GridColumn>
+                                <GridColumn Field="@nameof(UserManage.org_id)" HeaderText="Cabang" EditType="EditType.DropDownEdit">
+                                    <EditTemplate>
+                                        @{
+                                            var UserCabang = (context as UserManage);
+                                            <SfDropDownList ID="org_id" @bind-Value="@(UserCabang.org_id)" TItem="UserManage" TValue="string" DataSource="@a">
+                                                <DropDownListFieldSettings Value="org_id" Text="branch_name"></DropDownListFieldSettings>
+                                            </SfDropDownList>
                                             }
-                                        </Template>
-                                    </GridColumn>
-                                    <GridColumn Field="@nameof(UserManage.status)" HeaderText="Status">
-                                        <Template>
-                                            @{
-                                                var categori = (context as UserManage);
-                                                @if (categori.status == "1")
-                                                {
-                                                    <div>
-                                                        <span class="h6 bg-success text-white">Active</span>
-                                                    </div>
-                                                }
-                                                @if (categori.status == "0")
-                                                {
-                                                    <span class="h6 bg-danger text-white">In Active</span>
-                                                }
+                                        </EditTemplate>
+                                </GridColumn>
+                                <GridColumn Field="@nameof(UserManage.roles)" HeaderText="Jabatan">
+                                    <Template>
+                                        @{
+                                            var categori = (context as UserManage);
+                                            @if (categori.roles == "1")
+                                            {
+                                                <div>
+                                                    Admin
+                                                </div>
                                             }
-                                        </Template>
-                                    </GridColumn>
-                                    <GridColumn HeaderText="Manage User">
-                                        <GridCommandColumns>
-                                            <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-edit", CssClass="e-flat" })"></GridCommandColumn>
-                                            <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-delete", CssClass="e-flat" })"></GridCommandColumn>
-                                            <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-save", CssClass="e-flat" })"></GridCommandColumn>
-                                            <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-cancel-icon", CssClass="e-flat" })"></GridCommandColumn>
-                                        </GridCommandColumns>
-                                    </GridColumn>
-                                </GridColumns>
+                                            @if (categori.roles == "2")
+                                            {
+                                                <div>
+                                                    Pengisi
+                                                </div>
+                                            }
+                                        }
+                                    </Template>
+                                </GridColumn>
+                                <GridColumn Field="@nameof(UserManage.status)" HeaderText="Status">
+                                    <Template>
+                                        @{
+                                            var categori = (context as UserManage);
+                                            @if (categori.status == "1")
+                                            {
+                                                <div>
+                                                    <span class="h6 bg-success text-white">Active</span>
+                                                </div>
+                                            }
+                                            @if (categori.status == "0")
+                                            {
+                                                <span class="h6 bg-danger text-white">In Active</span>
+                                            }
+                                        }
+                                    </Template>
+                                </GridColumn>
+                                <GridColumn HeaderText="Edit User">
+                                    <GridCommandColumns>
+                                        <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-edit", CssClass="e-flat" })"></GridCommandColumn>
+                                        <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-save", CssClass="e-flat" })"></GridCommandColumn>
+                                        <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-cancel-icon", CssClass="e-flat" })"></GridCommandColumn>
+                                    </GridCommandColumns>
+                                </GridColumn>
+                            </GridColumns>
                         </SfGrid>
                     </div>
                 </div>
@@ -91,66 +106,79 @@
     </div>
 </div>
 
-            <HxModal @ref="myModal" Title="Modal title" Scrollable="true" UseStaticBackdrop="false">
-                <BodyTemplate>
-                    <p style="margin-bottom: 100vh;">
-                        This is some placeholder content to show the scrolling behavior for modals. Instead of repeating the text the modal, we use an inline style set a minimum height, thereby extending the length of the overall modal and demonstrating the overflow scrolling. When content becomes longer than the height of the viewport, scrolling will move the modal as needed.
-                    </p>
-                    <p>This content should appear at the bottom after you scroll.</p>
-                </BodyTemplate>
-                <FooterTemplate>
-                    <HxButton OnClick="HandleHideClick" Color="ThemeColor.Primary">Close</HxButton>
-                </FooterTemplate>
-            </HxModal>
+<HxModal @ref="myModal" Title="Modal title" Scrollable="true" UseStaticBackdrop="false">
+    <BodyTemplate>
+        <p style="margin-bottom: 100vh;">
+            This is some placeholder content to show the scrolling behavior for modals. Instead of repeating the text the modal, we use an inline style set a minimum height, thereby extending the length of the overall modal and demonstrating the overflow scrolling. When content becomes longer than the height of the viewport, scrolling will move the modal as needed.
+        </p>
+        <p>This content should appear at the bottom after you scroll.</p>
+    </BodyTemplate>
+    <FooterTemplate>
+        <HxButton OnClick="HandleHideClick" Color="ThemeColor.Primary">Close</HxButton>
+    </FooterTemplate>
+</HxModal>
 
-            @code {
+@code {
 
-                //List<UserManage> a = new List<UserManage>();
-                public List<UserManage> a { get; set; }
+    //List<UserManage> a = new List<UserManage>();
+    public List<UserManage> a { get; set; }
+    SfGrid<UserManage> Grid;
+    public List<Cabang> b { get; set; }
+    public Cabang SelectedOrg = new Cabang();
 
-                protected override void OnInitialized()
-                {
-                    a = UserManage2Service.GetUser();
-                }
+    public List<UserManage> databaru { get; set; }
 
-                public void ActionBeginHandler(ActionEventArgs<UserManage> Args)
-                {
-                    if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
-                    {
-                        if (Args.Action == "Add")
-                        {
+    protected override void OnInitialized()
+    {
+        a = UserManage2Service.GetUser();
+        b = UserManage2Service.GetCabang();
+    }
 
-                        }
-                        else
-                        {
-                            var result = UserManage2Service.UpdateUser(Args.Data);
-                            if (result.Item1 == 0) {
-                                var mess = result.Item2;
-                            }
-                        }
-                    }
-                }
+    public void RowSelectHandler(RowSelectEventArgs<Cabang> args)
+    {
+        SelectedOrg = args.Data;
+    }
 
-                public void ActionCompleteHandler(ActionEventArgs<UserManage> Args)
-                {
-                    if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
-                    {
-                        a = UserManage2Service.GetUser(); //to fetch the updated data from db to Grid
-                    }
-                }
-
-                private HxModal myModal;
-                private async Task HandleShowClick()
-                {
-                    await myModal.ShowAsync();
-                }
-
-                private async Task HandleHideClick()
-                {
-                    await myModal.HideAsync();
-                }
-
-
-
+    public void ActionBeginHandler(ActionEventArgs<UserManage> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
 
             }
+            else
+            {
+
+                var result = UserManage2Service.UpdateUser(Args.Data);
+                if (result.Item1 == 0)
+                {
+                    var mess = result.Item2;
+                }
+            }
+        }
+    }
+
+    public void ActionCompleteHandler(ActionEventArgs<UserManage> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            a = UserManage2Service.GetUser(); //to fetch the updated data from db to Grid
+        }
+    }
+
+    private HxModal myModal;
+    private async Task HandleShowClick()
+    {
+        await myModal.ShowAsync();
+    }
+
+    private async Task HandleHideClick()
+    {
+        await myModal.HideAsync();
+    }
+
+
+
+
+}

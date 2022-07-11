@@ -40,6 +40,26 @@ namespace TSJ_CRI.Data
             } 
         }
 
+        public List<Cabang> GetCabang()
+        {
+            List<Cabang> users = new List<Cabang>();
+            try
+            {
+                using (var connection = new SqlConnection(ConnStrProd))
+                {
+                    connection.Open();
+                    users = connection.Query<Cabang>("SELECT org_id, branch_name" +
+                                    " FROM Cabang_CRI").ToList();
+                    connection.Close();
+                }
+                return users;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public (int,string) UpdateUser(UserManage _user)
         {
             using (var connection = new SqlConnection(ConnStrProd))
