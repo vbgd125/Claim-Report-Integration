@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using TSJ_CRI.Authentication
 @using TSJ_CRI.Helpers
+@using TSJ_CRI.Model
 @inject UserAccountService userAccountService
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
@@ -134,12 +135,12 @@
         var customAuthStateProvider = (CustomAuth)authStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(new UserSession
             {
-                userid = userDb.Item1.First().userid,
-                username = userDb.Item1.First().username,
-                email = userDb.Item1.First().email,
-                roles = userDb.Item1.First().roles,
-                org_id = userDb.Item1.First().org_id,
-                status = userDb.Item1.First().status
+                Userid = userDb.Item1.First().Userid,
+                Username = userDb.Item1.First().Username,
+                Email = userDb.Item1.First().Email,
+                Roles = userDb.Item1.First().Roles,
+                OrgId = userDb.Item1.First().OrgId,
+                Status = userDb.Item1.First().Status
             });
         
         var returnUrl = navManager.QueryString("returnUrl") ?? "";

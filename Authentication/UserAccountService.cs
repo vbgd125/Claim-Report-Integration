@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.DirectoryServices.Protocols;
 using System.Net;
 using System.Threading.Tasks;
+using TSJ_CRI.Model;
 
 namespace TSJ_CRI.Authentication
 {
@@ -22,9 +23,16 @@ namespace TSJ_CRI.Authentication
         {
             try
             {
-                var sql = "SELECT user_id, username, email, roles, org_id, status " +
-                        "FROM User_CRI " +
-                        "where username = @username";
+                var sql = @"
+                SELECT USER_ID Userid
+                      ,USERNAME
+                      ,EMAIL
+                      ,ROLES
+                      ,ORG_ID OrgId
+                      ,STATUS
+                  FROM USER_CRI
+                 WHERE USERNAME = @USERNAME
+                ";
                 var conn = new SqlConnection(ConnStrProd);
                 var parameters = new { username = _username };
                 var user = await conn.QueryAsync<UserSession>(sql, parameters);

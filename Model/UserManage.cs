@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TSJ_CRI.Data
+namespace TSJ_CRI.Model
 {
     public class UserManage
     {
@@ -10,16 +10,11 @@ namespace TSJ_CRI.Data
         public string roles { get; set; }
         public string org_id { get; set; }
         public string status { get; set; }
-    }
-
-    public class Cabang 
-    {
-        public string org_id { get; set; }
-        public string branch_name { get; set; }
+        public string cabang { get; set; }
     }
 
     public class UserNew
-    { 
+    {
         [Required(ErrorMessage = "Wajib Pilih cabang")]
         public string org_id { get; set; }
         [Required(ErrorMessage = "Username tidak dapat kosong")]

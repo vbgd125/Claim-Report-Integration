@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TSJ_CRI.Model;
 
 namespace TSJ_CRI.Data
 {
@@ -12,7 +13,7 @@ namespace TSJ_CRI.Data
     public class UserManageService
     {
 
-        private string ConnStrProd;
+        private readonly string ConnStrProd;
         public UserManageService(IConfiguration config)
         {
             ConnStrProd = config.GetConnectionString("103ConnTest");
@@ -26,17 +27,17 @@ namespace TSJ_CRI.Data
                 using (var connection = new SqlConnection(ConnStrProd))
                 {
                     connection.Open();
-                    users = connection.Query<UserManage>("SELECT user_id id ,username username, email, status, roles, Org_ID org_id " +
-                                    "FROM User_CRI " +
-                                    "WHERE Org_id != 81").ToList();
+                    users = connection.Query<UserManage>("SELECT user_id id ,username, email, status, roles, USERS.Org_ID org_id, CABANG.BRANCH_NAME CABANG " +
+                                    "FROM User_CRI USERS, CABANG_CRI CABANG " +
+                                    "WHERE USERS.ORG_ID = CABANG.ORG_ID and cabang.Org_id != 81").ToList();
                     connection.Close();
                 }
                 return users;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
-            } 
+            }
         }
 
         public List<Cabang> GetCabang()
@@ -53,13 +54,13 @@ namespace TSJ_CRI.Data
                 }
                 return users;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
         }
 
-        public (int,string) UpdateUser(UserManage _user)
+        public async Task<(int, string)> UpdateUser(UserManage _user)
         {
             using (var connection = new SqlConnection(ConnStrProd))
             {
@@ -76,7 +77,7 @@ namespace TSJ_CRI.Data
                         username = _user.username
 
                     };
-                    var sql = connection.Execute("update User_CRI" +
+                    var sql = await connection.ExecuteAsync("update User_CRI" +
                                 " set username = @username" +
                                 ", email = @email" +
                                 ", org_id = @org_id" +
@@ -90,7 +91,7 @@ namespace TSJ_CRI.Data
                 {
                     return (0, ex.Message.ToString());
                 }
-            } 
+            }
         }
 
         public async Task<string> InsertUser(UserNew _user)
@@ -120,5 +121,5 @@ namespace TSJ_CRI.Data
                 return ex.Message.ToString();
             }
         }
-    }   
+    }
 }

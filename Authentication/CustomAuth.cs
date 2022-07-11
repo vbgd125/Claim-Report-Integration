@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TSJ_CRI.Model;
 
 namespace TSJ_CRI.Authentication
 {
@@ -28,14 +29,14 @@ namespace TSJ_CRI.Authentication
                 }
                 var ClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, userSession.username),
-                    new Claim(ClaimTypes.Role, userSession.roles),
-                    new Claim("userid", userSession.userid.ToString()),
-                    new Claim("username", userSession.username),
-                    new Claim("email", userSession.email),
-                    new Claim("roles", userSession.roles),
-                    new Claim("org_id", userSession.org_id),
-                    new Claim("status", userSession.status)
+                    new Claim(ClaimTypes.Name, userSession.Username),
+                    new Claim(ClaimTypes.Role, userSession.Roles),
+                    new Claim("userid", userSession.Userid.ToString()),
+                    new Claim("username", userSession.Username),
+                    new Claim("email", userSession.Email),
+                    new Claim("roles", userSession.Roles),
+                    new Claim("org_id", userSession.OrgId),
+                    new Claim("status", userSession.Status)
                 }, "CustomAuth"));
                 return await Task.FromResult(new AuthenticationState(ClaimsPrincipal));
             }
@@ -53,14 +54,14 @@ namespace TSJ_CRI.Authentication
                 await _sessionStorage.SetAsync("UserSession", userSession);
                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, userSession.username),
-                    new Claim(ClaimTypes.Role, userSession.roles),
-                    new Claim("userid", userSession.userid.ToString()),
-                    new Claim("username", userSession.username),
-                    new Claim("email", userSession.email),
-                    new Claim("roles", userSession.roles),
-                    new Claim("org_id", userSession.org_id),
-                    new Claim("status", userSession.status)
+                    new Claim(ClaimTypes.Name, userSession.Username),
+                    new Claim(ClaimTypes.Role, userSession.Roles),
+                    new Claim("userid", userSession.Userid.ToString()),
+                    new Claim("username", userSession.Username),
+                    new Claim("email", userSession.Email),
+                    new Claim("roles", userSession.Roles),
+                    new Claim("org_id", userSession.OrgId),
+                    new Claim("status", userSession.Status)
                 }, "CustomAuth"));
                 NotifyAuthenticationStateChanged();
             }
