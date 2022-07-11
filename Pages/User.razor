@@ -48,8 +48,8 @@
                                     <EditTemplate>
                                         @{
                                             var UserCabang = (context as UserManage);
-                                            <SfDropDownList ID="org_id" @bind-Value="@(UserCabang.org_id)" TItem="UserManage" TValue="string" DataSource="@a">
-                                                <DropDownListFieldSettings Value="org_id" Text="branch_name"></DropDownListFieldSettings>
+                                            <SfDropDownList ID="org_id" @bind-Value="@(UserCabang.org_id)" TItem="Cabang" TValue="string" DataSource="@b">
+                                                <DropDownListFieldSettings Value="org_id" Text="org_id"></DropDownListFieldSettings>
                                             </SfDropDownList>
                                             }
                                         </EditTemplate>
