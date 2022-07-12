@@ -29,7 +29,7 @@ namespace TSJ_CRI.Data
                     connection.Open();
                     users = connection.Query<UserManage>("SELECT user_id id ,username, email, status, roles, USERS.Org_ID org_id, CABANG.BRANCH_NAME CABANG " +
                                     "FROM User_CRI USERS, CABANG_CRI CABANG " +
-                                    "WHERE USERS.ORG_ID = CABANG.ORG_ID and cabang.Org_id != 81").ToList();
+                                    "WHERE USERS.ORG_ID = CABANG.ORG_ID and cabang.Org_id != 81 order by id asc").ToList();
                     connection.Close();
                 }
                 return users;

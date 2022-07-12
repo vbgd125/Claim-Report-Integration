@@ -3,6 +3,7 @@
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Data
 @using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
 @using TSJ_CRI.Data
 @using TSJ_CRI.Model
 @inject UserManageService userManageService
@@ -71,8 +72,22 @@
                                                     Pengisi
                                                 </div>
                                             }
+                                            @if (categori.roles == "3")
+                                            {
+                                                <div>
+                                                    Pengecek
+                                                </div>
+                                            }
                                         }
                                     </Template>
+                                    <EditTemplate>
+                                        @{
+                                            var Context = (context as UserManage);
+                                            <SfDropDownList ID="Roles" TItem="Roleses" TValue="string" @bind-Value="@(Context.roles)" DataSource="@_roles">
+                                                <DropDownListFieldSettings Value="Roles" Text="Description"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        }
+                                    </EditTemplate>
                                 </GridColumn>
                                 <GridColumn Field="@nameof(UserManage.status)" HeaderText="Status">
                                     <Template>
@@ -122,17 +137,17 @@
     //private Cabang SelectedOrg = new Cabang();
     public string ErrorDetails = "";
 
-    private class Statuses
-    {
-        public string Status { get; set; }
-
-        public string Description { get; set; }
-    }
-
     List<Statuses> _status = new List<Statuses>
-    {
+{
         new Statuses() { Status = "1", Description = "Active" },
-        new Statuses() { Status = "0", Description = "In Active" },
+        new Statuses() { Status = "0", Description = "In Active" }
+    };
+
+    List<Roleses> _roles = new List<Roleses>
+{
+        new Roleses() { Roles = "1", Description = "Admin" },
+        new Roleses() { Roles = "2", Description = "Pengisi" },
+        new Roleses() { Roles = "3", Description = "Pengecek" }
     };
 
 
