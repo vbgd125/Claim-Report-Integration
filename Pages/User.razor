@@ -90,6 +90,14 @@
                                             }
                                         }
                                     </Template>
+                                    <EditTemplate>
+                                        @{
+                                            var Context = (context as UserManage);
+                                            <SfDropDownList ID="Status" TItem="Statuses" TValue="string" @bind-Value="@(Context.status)" DataSource="@_status">
+                                                <DropDownListFieldSettings Value="Status" Text="Description"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        }
+                                    </EditTemplate>
                                 </GridColumn>
                                 <GridColumn HeaderText="Edit User">
                                     <GridCommandColumns>
@@ -107,13 +115,25 @@
     </div>
 </div>
 
-
 @code {
     private List<UserManage> _user;
     private List<Cabang> _cabang;
     private SfGrid<UserManage> Grid;
     //private Cabang SelectedOrg = new Cabang();
     public string ErrorDetails = "";
+
+    private class Statuses
+    {
+        public string Status { get; set; }
+
+        public string Description { get; set; }
+    }
+
+    List<Statuses> _status = new List<Statuses>
+    {
+        new Statuses() { Status = "1", Description = "Active" },
+        new Statuses() { Status = "0", Description = "In Active" },
+    };
 
 
     protected override void OnAfterRender(bool firstRender)
