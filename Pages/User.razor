@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Popups 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Buttons
 @using TSJ_CRI.Data
@@ -13,17 +14,57 @@
 <br />
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-md-8">
+        <div class="col-xs-12 col-md-10">
             <h3>User Management</h3>
         </div>
-        <div class="col-xs-12 col-md-4">
-            <div class="float-left float-right">
-            </div>
+        <div class="col-xs-12 col-md-2">
+                <SfButton IconCss="e-icons e-plus" IsPrimary="true" @onclick="@OpenDialog">New User</SfButton>
         </div>
     </div>
 </div>
 
 <br />
+
+<SfDialog Target="#target" Width="445px" AllowDragging="false" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+    <DialogTemplates>
+        <Header> New User </Header>
+        <Content> 
+
+            <div class="form-row">
+
+                <EditForm Model="@model" OnValidSubmit="@submit">
+                    <DataAnnotationsValidator>
+                        <div class="form-group col-md-6">
+                            <label class="e-float-text e-label-top">Username</label>
+                            <SfTextBox ID="UserName" @bind-Value="@model.username" )"></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="e-float-text e-label-top">User Email</label>
+                            <SfTextBox ID="UserName" @bind-Value="@" )"></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="e-float-text e-label-top">Cabang</label>
+                            <SfTextBox ID="UserName" @bind-Value="@email" )"></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="e-float-text e-label-top">Roles</label>
+                            <SfTextBox ID="UserName" @bind-Value="@email" )"> </SfTextBox>
+                        </div>
+                    </DataAnnotationsValidator>
+                    
+
+                </EditForm>
+            </div>
+
+        </Content>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@AnimationEffect" Duration=400 />
+    <DialogButtons>
+        <DialogButton Content="OK" IsPrimary="true" OnClick="@CloseDialog" />
+        <DialogButton Content="Cancel" OnClick="@CloseDialog" />
+    </DialogButtons>
+</SfDialog>
+
 
 @{
     var SpecificCols = (new string[] { "username" });
@@ -130,12 +171,22 @@
     </div>
 </div>
 
+<style>
+    .e-plus-icon::before {
+        content: '\e823';
+    }
+</style>
+
 @code {
     private List<UserManage> _user;
     private List<Cabang> _cabang;
+    private List<UserNew> _adduser;
     private SfGrid<UserManage> Grid;
     //private Cabang SelectedOrg = new Cabang();
+    private UserNew model = new UserNew();
     public string ErrorDetails = "";
+    private bool IsVisible { get; set; } = true;
+    private DialogEffect AnimationEffect = DialogEffect.Zoom;
 
     List<Statuses> _status = new List<Statuses>
 {
@@ -155,10 +206,21 @@
     {
         if (firstRender)
         {
+            CloseDialog();
             _user = userManageService.GetUser();
             _cabang = userManageService.GetCabang();
             StateHasChanged();
         }
+    }
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
     }
 
     //ga ada row selected diatas, ini untuk apa ?
@@ -167,16 +229,19 @@
     //    SelectedOrg = args.Data;
     //}
 
+    private void submit() { 
+    }
+
     public async Task ActionBeginHandler(ActionEventArgs<UserManage> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
+                var result = await userManageService.UpdateUser(Args.Data);
+                if (result.Item1 == 0)
+                {
+                    var mess = result.Item2;
+                }
             //Args.Action selalu edit ga perlu if else
-            var result = await userManageService.UpdateUser(Args.Data);
-            if (result.Item1 == 0)
-            {
-                var mess = result.Item2;
-            }
         }
     }
 
