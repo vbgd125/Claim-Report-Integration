@@ -202,19 +202,19 @@
     };
 
 
-    //[Inject] protected IHxMessengerService Messenger { get; set; }
-    //private async void ErrorMessenger(string _title, string _message)
-    //{
-    //    Messenger.Clear();
-    //    Messenger.AddError(title: _title, message: _message);
-    //    await Task.Delay(1000);
-    //}
-    //private async void SuccessMessenger(string _title, string _message)
-    //{
-    //    Messenger.Clear();
-    //    Messenger.AddInformation(title: _title, message: _message);
-    //    await Task.Delay(1000);
-    //}
+    [Inject] protected IHxMessengerService Messenger { get; set; }
+    private async void ErrorMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddError(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    private async void SuccessMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddInformation(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -244,12 +244,16 @@
         if (result.Item1 == 0)
         {
             var mess = result.Item2;
-            //ErrorMessenger("Belum berhasil insert 👀", mess);
+            CloseDialog();
+            ErrorMessenger("Belum berhasil insert 👀", mess);
+            StateHasChanged();
         }
         else
         {
             var mess = result.Item2;
-            //SuccessMessenger("Berhasil insert", mess);
+            CloseDialog();
+            SuccessMessenger("Berhasil insert", mess);
+            StateHasChanged();
         }
     }
 

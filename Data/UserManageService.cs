@@ -106,14 +106,15 @@ namespace TSJ_CRI.Data
                         @username = _user.username,
                         @email = _user.email,
                         @roles = _user.roles,
-                        @org_id = _user.org_id
+                        @org_id = _user.org_id,
+                        @status = '1'
                     };
-                    var sql = await connection.ExecuteAsync("insert into User_CRI(username,email.roles.org_id,status) " +
+                    var sql = await connection.ExecuteAsync("insert into User_CRI(username,email,roles,org_id,status) " +
                             "values(@username," +
                                    "@email, " +
                                    "@roles, " +
                                    "@org_id, " +
-                                   "'1'",parameters);
+                                   "@status)",parameters);
                     connection.Close();
                     return (sql, "Berhasil");
                 }
