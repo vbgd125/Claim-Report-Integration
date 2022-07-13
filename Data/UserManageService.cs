@@ -94,31 +94,33 @@ namespace TSJ_CRI.Data
             }
         }
 
-        public async Task<string> InsertUser(UserNew _user)
+        public async Task<(int, string)> InsertUser(UserNew _user)
         {
-            var sql = @"insert into User_CRI(username,email.roles.org_id,status) 
-                            values(@username,
-                                   @email,
-                                   @roles,
-                                   @org_id,
-                                   '1')";
-            var parameters = new
+            using (var connection = new SqlConnection(ConnStrProd))
             {
-                @username = _user.username,
-                @email = _user.email,
-                @roles = _user.roles,
-                @org_id = _user.org_id
-            };
-
-            try
-            {
-                var conn = new SqlConnection(ConnStrProd);
-                var account = await conn.QueryAsync<UserManage>(sql, parameters);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message.ToString();
+                try
+                {
+                    connection.Open();
+                    var parameters = new
+                    {
+                        @username = _user.username,
+                        @email = _user.email,
+                        @roles = _user.roles,
+                        @org_id = _user.org_id
+                    };
+                    var sql = await connection.ExecuteAsync("insert into User_CRI(username,email.roles.org_id,status) " +
+                            "values(@username," +
+                                   "@email, " +
+                                   "@roles, " +
+                                   "@org_id, " +
+                                   "'1'",parameters);
+                    connection.Close();
+                    return (sql, "Berhasil");
+                }
+                catch (Exception ex)
+                {
+                    return (0, ex.Message.ToString());
+                }
             }
         }
     }

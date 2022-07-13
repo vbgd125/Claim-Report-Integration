@@ -2,7 +2,8 @@
 @using System.ComponentModel.DataAnnotations
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Data
-@using Syncfusion.Blazor.Popups 
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Buttons
 @using TSJ_CRI.Data
@@ -18,49 +19,48 @@
             <h3>User Management</h3>
         </div>
         <div class="col-xs-12 col-md-2">
-                <SfButton IconCss="e-icons e-plus" IsPrimary="true" @onclick="@OpenDialog">New User</SfButton>
+            <SfButton IconCss="e-icons e-plus" IsPrimary="true" @onclick="@OpenDialog">New User</SfButton>
         </div>
     </div>
 </div>
 
 <br />
 
-<SfDialog Target="#target" Width="445px" AllowDragging="false" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+
+<SfDialog Target="#target" Width="550px" AllowDragging="false" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
     <DialogTemplates>
         <Header> New User </Header>
-        <Content> 
+        <Content>
 
-            <div class="form-row">
-
-                <EditForm Model="@model" OnValidSubmit="@submit">
-                    <DataAnnotationsValidator>
-                        <div class="form-group col-md-6">
-                            <label class="e-float-text e-label-top">Username</label>
-                            <SfTextBox ID="UserName" @bind-Value="@model.username" )"></SfTextBox>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="e-float-text e-label-top">User Email</label>
-                            <SfTextBox ID="UserName" @bind-Value="@" )"></SfTextBox>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="e-float-text e-label-top">Cabang</label>
-                            <SfTextBox ID="UserName" @bind-Value="@email" )"></SfTextBox>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="e-float-text e-label-top">Roles</label>
-                            <SfTextBox ID="UserName" @bind-Value="@email" )"> </SfTextBox>
-                        </div>
-                    </DataAnnotationsValidator>
-                    
-
-                </EditForm>
-            </div>
-
+            <EditForm Model="@modeldata">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>User AD</label>
+                        <SfTextBox @bind-Value="@modeldata.username"></SfTextBox>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>User Email</label>
+                        <SfTextBox @bind-Value="@modeldata.email"></SfTextBox>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Cabang</label>
+                        <SfDropDownList ID="org_id" TItem="Cabang" TValue="string" @bind-Value="@(modeldata.org_id)" DataSource="@_cabang">
+                            <DropDownListFieldSettings Value="org_id" Text="branch_name"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Roles</label>
+                        <SfDropDownList ID="Roles" TItem="Roleses" TValue="string" @bind-Value="@(modeldata.roles)" DataSource="@_roles">
+                            <DropDownListFieldSettings Value="Roles" Text="Description"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+                </div>
+            </EditForm>
         </Content>
     </DialogTemplates>
     <DialogAnimationSettings Effect="@AnimationEffect" Duration=400 />
     <DialogButtons>
-        <DialogButton Content="OK" IsPrimary="true" OnClick="@CloseDialog" />
+        <DialogButton Content="OK" IsPrimary="true" OnClick="@(() => InsertRow(modeldata))" />
         <DialogButton Content="Cancel" OnClick="@CloseDialog" />
     </DialogButtons>
 </SfDialog>
@@ -183,7 +183,7 @@
     private List<UserNew> _adduser;
     private SfGrid<UserManage> Grid;
     //private Cabang SelectedOrg = new Cabang();
-    private UserNew model = new UserNew();
+    UserNew modeldata = new UserNew();
     public string ErrorDetails = "";
     private bool IsVisible { get; set; } = true;
     private DialogEffect AnimationEffect = DialogEffect.Zoom;
@@ -201,6 +201,20 @@
         new Roleses() { Roles = "3", Description = "Pengecek" }
     };
 
+
+    //[Inject] protected IHxMessengerService Messenger { get; set; }
+    //private async void ErrorMessenger(string _title, string _message)
+    //{
+    //    Messenger.Clear();
+    //    Messenger.AddError(title: _title, message: _message);
+    //    await Task.Delay(1000);
+    //}
+    //private async void SuccessMessenger(string _title, string _message)
+    //{
+    //    Messenger.Clear();
+    //    Messenger.AddInformation(title: _title, message: _message);
+    //    await Task.Delay(1000);
+    //}
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -223,24 +237,31 @@
         this.IsVisible = false;
     }
 
-    //ga ada row selected diatas, ini untuk apa ?
-    //public void RowSelectHandler(RowSelectEventArgs<Cabang> args)
-    //{
-    //    SelectedOrg = args.Data;
-    //}
 
-    private void submit() { 
+    private async Task InsertRow(UserNew userNew)
+    {
+        var result = await userManageService.InsertUser(userNew);
+        if (result.Item1 == 0)
+        {
+            var mess = result.Item2;
+            //ErrorMessenger("Belum berhasil insert 👀", mess);
+        }
+        else
+        {
+            var mess = result.Item2;
+            //SuccessMessenger("Berhasil insert", mess);
+        }
     }
 
     public async Task ActionBeginHandler(ActionEventArgs<UserManage> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
-                var result = await userManageService.UpdateUser(Args.Data);
-                if (result.Item1 == 0)
-                {
-                    var mess = result.Item2;
-                }
+            var result = await userManageService.UpdateUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
             //Args.Action selalu edit ga perlu if else
         }
     }
