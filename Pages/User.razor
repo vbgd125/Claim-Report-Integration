@@ -69,6 +69,8 @@
 @{
     var SpecificCols = (new string[] { "username" });
     var Tool = (new List<string>() { "Search" });
+    var RenderingMode = RowDirection.Horizontal;
+    
 }
 
 <div class="col-lg-12 control-section">
@@ -77,7 +79,8 @@
             <div class="content-wrapper e-bigger e-adaptive-demo">
                 <div class="e-mobile-layout">
                     <div class="e-mobile-content">
-                        <SfGrid DataSource="@_user" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" Toolbar="@Tool" TValue="UserManage">
+                        <SfGrid DataSource="@_user" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" Toolbar="@Tool" TValue="UserManage" EnableAdaptiveUI="true"
+                                RowRenderingMode="@RenderingMode">
                             <GridSearchSettings Fields=@SpecificCols IgnoreCase="true"></GridSearchSettings>
                             <GridEditSettings AllowEditing="true" AllowAdding="true"></GridEditSettings>
                             <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UserManage"></GridEvents>
