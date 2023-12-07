@@ -1,4 +1,6 @@
 @using TSJ_CRI.Authentication
+@inherits LayoutComponentBase
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
         <Found Context="routeData">
@@ -22,3 +24,7 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+<HxMessageBoxHost />
+
+@Body

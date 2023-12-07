@@ -1,19 +1,526 @@
 ﻿@page "/"
 
-<AuthorizeView>
+@using Syncfusion.Blazor
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Layouts
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Charts
+
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@inject NavigationManager NavigationManager
+@inject Form2service form2service
+@inject Formservice formservice
+@inject IndexService indexservice
+
+@*<AuthorizeView>
     <Authorized>
+    <section id="hero" class="d-flex align-items-center">
+    <div class="container">
         <h1>Hello @context.User.Identity.Name!</h1>
-        <h1>Hello @context.User.Identity.IsAuthenticated.ToString()</h1>
-        <h1>Hello @context.User.FindFirst("org_id").Value!</h1>
+        </div>
+    </section>
+
     </Authorized>
     <NotAuthorized>
         <h1>Hello Guest</h1>
     </NotAuthorized>
-</AuthorizeView>
+</AuthorizeView>*@
+<br />
+<SfDateRangePicker StartDate="@StartValue" EndDate="@EndValue" TValue="DateTime?" Placeholder="Choose a Range">
+    <DateRangePickerEvents TValue="DateTime?" ValueChange="@onChange"></DateRangePickerEvents>
+<br/>
+<br/>
+<div class="control-section">
+    
+    <SfDashboardLayout @ref="dashboardObject" Columns="8" CellSpacing="@Spacing" CellAspectRatio="@Ratio">
+        <DashboardLayoutPanels>
+            <AuthorizeView Roles="2">
+                    <Authorized>  
+            <DashboardLayoutPanel Column="0" Row="0" SizeX="2" SizeY="1">
+                <ContentTemplate>
+                    <div class="root-container">
+                        <div class="item-container income">
+                            <p>@DHR / @totalHR</p>
+                            <div class="auto-left">
+                                <span class="bi bi-building"></span>
+                            </div>
+                        </div>
+                        <div class="bottom-container">
+                            <p>Download Hilang Rusak / Total File</p>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            <DashboardLayoutPanel Column="2" Row="0" SizeX="2" SizeY="1">
+                <ContentTemplate>
+                    <div class="root-container">
+                        <div class="item-container expense">
+                            <p>@UHR / @totalHR</p>
+                            <div class="auto-left">
+                                <span class="e-icon export-pdf"></span>
+                            </div>
+                        </div>
+                        <div class="bottom-container">
+                            <p>Upload Hilang Rusak / Total File</p>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            <DashboardLayoutPanel Column="4" Row="0" SizeX="2" SizeY="1">
+                <ContentTemplate>
+                    <div class="root-container">
+                        <div class="item-container balance">
+                            <p>@DTS / @totalts</p>
+                            <div class="auto-left">
+                                <span class="balance-icon e-icon"></span>
+                            </div>
+                        </div>
+                        <div class="bottom-container">
+                                        <p>Download Tidak Sesuai / Total File</p>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            <DashboardLayoutPanel Column="6" Row="0" SizeX="2" SizeY="1">
+                <ContentTemplate>
+                    <div class="root-container">
+                        <div class="item-container transaction">
+                            <p>@UTS / @totalts</p>
+                            <div class="auto-left">
+                                <span class="transaction-icon e-icon"></span>
+                            </div>
+                        </div>
+                        <div class="bottom-container">
+                                        <p>Upload Tidak Sesuai / Total File</p>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            </Authorized>
+                </AuthorizeView>
 
-Welcome to your new app.
+                
+                <AuthorizeView Roles="1,3,4,5">
+                    <Authorized>
+                        <DashboardLayoutPanel Column="4" Row="1" SizeX="4" SizeY="5">
+                            <HeaderTemplate>
+                                <span class="title">Data Cabang Tidak Sesuai</span>
+                            </HeaderTemplate>
+                            <ContentTemplate>
+                                <SfChart Title="Data Cabang">
+                                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                                    </ChartPrimaryXAxis>
+                                    <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartLegendSettings Visible="true" EnableHighlight="true"></ChartLegendSettings>
+                                    <ChartSeriesCollection>
+                                        <ChartSeries DataSource="@_SummaryTS" XName="branch_name" YName="banyak" ColumnSpacing="0.2" Type="ChartSeriesType.Bar">
+                                        </ChartSeries>
+                                    </ChartSeriesCollection>
+                                </SfChart>
+                            </ContentTemplate>
+                        </DashboardLayoutPanel>
+                    </Authorized>
+                </AuthorizeView>
+
+                
+                <AuthorizeView Roles="1,3,4,5">
+                    <Authorized>
+                        <DashboardLayoutPanel Column="0" Row="1" SizeX="4" SizeY="5">
+                            <HeaderTemplate>
+                                <span class="title">Data Cabang Hilang/Rusak</span>
+                            </HeaderTemplate>
+                            <ContentTemplate>
+                                <SfChart Title="Data Cabang">
+                                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                                    </ChartPrimaryXAxis>
+                                    <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartLegendSettings Visible="true" EnableHighlight="true"></ChartLegendSettings>
+                                    <ChartSeriesCollection>
+                                        <ChartSeries DataSource="@_SummaryHR" XName="branch_name" YName="banyak" ColumnSpacing="0.2" Type="ChartSeriesType.Bar">
+                                        </ChartSeries>
+                                    </ChartSeriesCollection>
+                                </SfChart>
+                            </ContentTemplate>
+                        </DashboardLayoutPanel>
+                    </Authorized>
+                </AuthorizeView>
+
+                <AuthorizeView Roles="2">
+                    <Authorized>  
+            <DashboardLayoutPanel Column="0" Row="1" SizeX="4" SizeY="3">
+                <HeaderTemplate>
+                    <span class="title">Total Riwayat</span>
+                </HeaderTemplate>
+                <ContentTemplate>
+                    <SfAccumulationChart Height="100%" Width="100%" EnableAnimation="false" EnableSmartLabels="true"  Theme="@Theme">
+                        <AccumulationChartSeriesCollection>
+                            <AccumulationChartSeries DataSource="@PieRenderingData" XName="Text" YName="Y" Radius="83%" StartAngle="0" EndAngle="360" InnerRadius="50%" Palettes="@palettes">
+                                <AccumulationDataLabelSettings Visible="true" Name="X" Position="AccumulationLabelPosition.Outside">
+                                    <AccumulationChartConnector Length="10%"></AccumulationChartConnector>
+                                    <AccumulationChartDataLabelFont Size="14px" FontFamily="Roboto"></AccumulationChartDataLabelFont>
+                                </AccumulationDataLabelSettings>
+                            </AccumulationChartSeries>
+                        </AccumulationChartSeriesCollection>
+                        <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
+                        <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+                    </SfAccumulationChart>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+                    </Authorized>
+                </AuthorizeView>
+        </DashboardLayoutPanels>
+    </SfDashboardLayout>
+    </div>
+</SfDateRangePicker>
 
 @code {
+
+    private string Branch = null;
+    private string UserId = "";
+    private string cabang;
+    private int DHR;
+    private int UHR;
+    private int DTS;
+    private int UTS;
+    private static int HRR;
+    private static int HHR;
+    private static int TS;
+    private int totalHR;
+    private int totalts;
+    private string filter;
+    public DateTime? StartValue;
+    public DateTime? EndValue { get; set; } = DateTime.Now;
+    public static string Branch_name { get; set; }
+    public string jumlah  { get; set; }
+    private bool IsVisible { get; set; } = true;
+
+    private async Task onChange(RangePickerEventArgs<DateTime?> args)
+    {
+    
+    StartValue = args.StartDate;
+        EndValue = args.EndDate;
+        DHR = await indexservice.brpDHR(UserId, StartValue, EndValue);
+        UHR = await indexservice.brpUHR(UserId, StartValue, EndValue);
+        DTS = await indexservice.brpDTS(UserId, StartValue, EndValue);
+        UTS = await indexservice.brpUTS(UserId, StartValue, EndValue);
+        HHR = await indexservice.brphilang(UserId, StartValue, EndValue);
+        HRR = await indexservice.brprusak(UserId, StartValue, EndValue);
+        TS = await indexservice.brpTS(UserId, StartValue, EndValue);
+        totalHR = await indexservice.brphr(UserId, StartValue, EndValue);
+        totalts = await indexservice.brpTS(UserId, StartValue, EndValue);
+        Branch_name = await indexservice.GetNama();
+        _SummaryTS = indexservice.GetjumlahTS(StartValue, EndValue);
+        _SummaryHR = indexservice.GetjumlahHR(StartValue, EndValue);
+
+        PieRenderingData = new List<RenderingData> {
+        new RenderingData { X = "Hilang", Y = HHR},
+        new RenderingData { X = "Rusak", Y = HRR},
+        new RenderingData { X = "Tidak Sesuai", Y = TS },
+        };
+        
+        StateHasChanged();
+    }
+
+
+
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
+
+    private List<RenderingData> PieRenderingData;
+
+    private List<Summary> _SummaryTS; 
+
+    private List<Summary> _SummaryHR; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            cabang = authState.User.FindFirst("org_id").Value;
+            UserId = authState.User.FindFirst("userid").Value.ToString();
+        }
+
+        Branch = await form2service.cabang(cabang);
+
+        var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        StartValue = firstDayOfMonth;
+        DHR = await indexservice.brpDHR(UserId,StartValue,EndValue);
+        UHR = await indexservice.brpUHR(UserId,StartValue, EndValue);
+        DTS = await indexservice.brpDTS(UserId,StartValue, EndValue);
+        UTS = await indexservice.brpUTS(UserId,StartValue, EndValue);
+        HHR = await indexservice.brphilang(UserId,StartValue, EndValue);
+        HRR = await indexservice.brprusak(UserId,StartValue, EndValue);
+        TS = await indexservice.brpTS(UserId,StartValue, EndValue);
+        totalHR = await indexservice.brphr(UserId, StartValue, EndValue);
+        totalts = await indexservice.brpTS(UserId, StartValue, EndValue);
+        Branch_name = await indexservice.GetNama();
+        _SummaryTS = indexservice.GetjumlahTS(StartValue, EndValue);
+        _SummaryHR = indexservice.GetjumlahHR(StartValue, EndValue);
+
+        PieRenderingData = new List<RenderingData> {
+        new RenderingData { X = "Hilang", Y = HHR},
+        new RenderingData { X = "Rusak", Y = HRR},
+        new RenderingData { X = "Tidak Sesuai", Y = TS },
+        };
+        _SummaryTS = new List<Summary>{
+
+};
+
+    }
+
+    SfDashboardLayout dashboardObject;
+    private Theme Theme { get; set; }
+    private double[] Spacing = new double[] { 15, 15 };
+    private double Ratio = 160 / 100;
+
+
+
+    private string[] palettes = new string[] { "#61EFCD", "#CDDE1F" , "#CA765A", "#FEC200", "#CA765A", "#2485FA", "#F57D7D", "#C152D2",
+    "#8854D9", "#3D4EB8", "#00BCD7","#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300" };
+    protected override void OnInitialized()
+    {
+
+    }
+    public class RenderingData
+    {
+        public string X { get; set; }
+        public int Y { get; set; }
+        public string Text { get; set; }
+        public string Fill { get; set; }
+    }
+
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CloseDialog();
+            _SummaryTS = indexservice.GetjumlahTS(StartValue, EndValue);
+            _SummaryHR = indexservice.GetjumlahHR(StartValue, EndValue);
+            StateHasChanged();
+        }
+    }
 }
+<style>
+    .e-input-group:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error) {
+       
+        width:350px
+        
+    }
+    .e-input-group input.e-input, .e-input-group.e-control-wrapper input.e-input {
+        
+        height: 30px;
+        font-size: 14px;
+        width: 350px;
+    }
+    .e-dashboardlayout {
+        padding: 10px;
+    }
+
+        .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+            line-height: 40px;
+            height: 40px;
+        }
+
+    .fluent .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .fluent-dark .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        height: 56px;
+    }
+
+    .bootstrap5 .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .bootstrap5-dark .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .tailwind .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .fluent .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .fluent-dark .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .tailwind-dark .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        line-height: inherit;
+    }
+
+    .root-container {
+        height: 100%;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .category-text {
+        float: left;
+        line-height: 30px;
+    }
+
+    .category-icon {
+        float: left;
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-size: 100%;
+        height: 30px;
+        width: 30px;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .item-container {
+        display: flex;
+        text-align: center;
+        height: 70%;
+        padding: 2rem;
+        font-size: 22px;
+        font-weight: 400;
+    }
+
+        .item-container.income {
+            color: #17a00e
+        }
+
+        .item-container.balance {
+            color: #008cff;
+        }
+
+        .item-container.transaction {
+            color: #f41127;
+        }
+
+        .item-container.expense {
+            color: #ca765a;
+        }
+
+    .bottom-container {
+        text-align: center;
+        font-weight: 400;
+        font-size: 16px;
+    }
+
+    .mobile .bottom-container {
+        font-size: 30px;
+    }
+
+    .material .bottom-container,
+    .fabric .bottom-container,
+    .bootstrap .bottom-container,
+    .bootstrap4 .bottom-container,
+    .tailwind .bottom-container,
+    .bootstrap5 .bottom-container {
+        color: #4c5258;
+    }
+
+    .amt-payment.expense-payment {
+        font-weight: bold;
+        color: #ff5e65;
+    }
+
+    .amt-payment.income-payment {
+        font-weight: bold;
+        color: #04cd93;
+    }
+
+    .auto-left {
+        margin-left: auto;
+    }
+
+    .e-panel-cotent {
+        padding: 1rem;
+    }
+
+    @@font-face {
+        font-family: 'e-sb-icons';
+        src: url(data:application/x-font-ttf;charset=utf-8;base64,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) format("truetype");
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .balance:after {
+        content: "\e900";
+        font-size: 24px;
+        font-family: "e-sb-icons";
+    }
+
+    .expense:after {
+        content: "\e901";
+        font-size: 24px;
+        font-family: "e-sb-icons";
+    }
+    /*	.income:after {
+                    content: "\e902";
+                    font-size: 24px;
+                    font-family: "e-sb-icons";
+                }*/
+    .transaction:after {
+        content: "\e903";
+        font-size: 24px;
+        font-family: "e-sb-icons";
+    }
+
+    .e-headercelldiv span.e-headertext {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .e-grid .e-rowcell {
+        font-size: 13px;
+    }
+
+    .mobile .e-control.e-lib.e-dashboardlayout.e-responsive {
+        z-index: 0;
+        overflow: scroll;
+    }
+
+    .mobile .item-container {
+        padding: 40px;
+        font-size: 40px;
+    }
+
+    .mobile .balance:after {
+        content: "\e900";
+        font-size: 40px;
+        font-family: "e-sb-icons";
+    }
+
+    .mobile .expense:after {
+        content: "\e901";
+        font-size: 40px;
+        font-family: "e-sb-icons";
+    }
+
+    .mobile .income:after {
+        content: "\e902";
+        font-size: 40px;
+        font-family: "e-sb-icons";
+    }
+
+    .mobile .transaction:after {
+        content: "\e903";
+        font-size: 40px;
+        font-family: "e-sb-icons";
+    }
+
+    .e-control.e-lib.e-dashboardlayout.e-responsive {
+        z-index: 0;
+    }
+
+    .e-dashboardlayout.e-control .e-panel .e-panel-container .e-grid.sf-grid .e-gridcontent .e-content.e-yscroll {
+        overflow: auto;
+    }
+
+    body.tailwind-dark .e-dashboardlayout.e-control .e-panel {
+        border: 1px #435266 solid;
+    }
+
+    .e-gridheader {
+        padding-right: 0px !important;
+    }
+</style>
+

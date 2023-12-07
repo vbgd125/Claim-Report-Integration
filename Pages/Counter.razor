@@ -1,4 +1,18 @@
 ﻿@page "/counter"
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@inject IJSRuntime JS
+@inject Form2service form2service
+@inject Formservice formservice
+@inject UserHRService userHRservice
+@inject UserKetidaksesuaianService userketidaksesuaianservice
 
     <br />
     <br />
@@ -16,10 +30,10 @@
                 <div class='ones'>
                     <div class='elong'>
                         <div class='first'>
-                            <a href='#'>Claim Produk 1</a>
+                            <a href='hilangrusak'>Hilang/Rusak </a>
                         </div>
                         <div class='second'>
-                            <a class='secondary' href='hilangrusak'>Hilang/Rusak</a>
+                            <a class='secondary' href='hilangrusak'>Pergi Ke Page</a>
                         </div>
                     </div>
                 </div>
@@ -28,10 +42,11 @@
                 <div class='three'>
                     <div class='elong'>
                         <div class='first'>
-                            <a href='#'>Tidak Sesuai</a>
+
+                            <a href='TS'>Pergi Ke Page</a>
                         </div>
                         <div class='second'>
-                            <a class='secondary' href='#'>Claim Produk 2</a>
+                            <a class='secondary' href='TS'>Tidak Sesuai</a>
                         </div>
                     </div>
                 </div>
@@ -49,6 +64,7 @@
         {
             currentCount++;
         }
+
 
         [CascadingParameter]
         private Task<AuthenticationState> authenticationState { get; set; }

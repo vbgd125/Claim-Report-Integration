@@ -1,93 +1,4 @@
-.page {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex-direction:row;
-}
-
-.main {
-    flex: 1;
-}
-
-.sidebar {
-    background-color: #d1e4ff;
-}
-
-.top-row {
-    background-color: transparent;
-    border-bottom: 1px solid white;
-    justify-content: center;
-    height: 3.5rem;
-    display: flex;
-    align-items: center;
-}
-
-    .top-row ::deep a, .top-row .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-    }
-
-#logout_sidebar_button {
-    position: absolute;
-    display: inline-block;
-    bottom: 0px;
-    width:250px;
-}
-
-    .top-row a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-@media (max-width: 640.98px) {
-    .top-row:not(.auth) {
-        display: none;
-    }
-
-    .top-row.auth {
-        justify-content: space-between;
-    }
-
-    .top-row a, .top-row .btn-link {
-        margin-left: 0;
-    }
-
-    #logout_sidebar_button {
-        position: inherit;
-        width: 100%;
-    }
-}
-
-@media (min-width: 641px) {
-    .page {
-        flex-direction: row;
-        min-height:500px;
-    }
-
-    .sidebar {
-        width: 250px;
-        min-height: 200vh;
-        position: sticky;
-        bottom: 0 !important;
-    }
-
-
-    .top-row {
-        position: sticky;
-        bottom: 0 !important;
-        z-index: 1;
-    }
-
-    .main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
-
-    .main {
-        width: 250px;
-    }
-}
-#wrapper {
+﻿/*#wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -138,7 +49,7 @@
     left: 190px;
     width: 0;
     height: 100%;
-    margin-left: 100px;
+    margin-left: -220px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-transition: all 0.5s ease;
@@ -148,6 +59,10 @@
     position: absolute;
     background: #78b3df;
 }
+
+    #sidebar-wrapper::-webkit-scrollbar {
+        display: none;
+    }
 
 #wrapper.toggled #sidebar-wrapper {
     width: 220px;
@@ -163,12 +78,12 @@
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
     margin-right: -220px;
-}
+}*/
 
--------------------------------
-     Sidebar nav styles        
--------------------------------
-.navbar {
+/*-------------------------------*/
+/*     Sidebar nav styles        */
+/*-------------------------------*/
+/*.navbar {
     padding: 0;
 }
 
@@ -272,9 +187,9 @@
 }
 
 .sidebar-brand {
-    height: 91px;
-     background-color: #4595d2;
-    background: linear-gradient(#4595d2, #78b3df );
+    height: 91px;*/
+    /* background-color: #4595d2;*/
+    /*background: linear-gradient(#4595d2, #78b3df );
     padding-top: 25px;
 }
 
@@ -291,26 +206,7 @@
     text-align: center;
     font-size: 1em;
     background: #ffffff;
-}
-
-.sidebar-nav .dropdown-menu1 {
-    position: relative;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-    border: none;
-    background-color: #222;
-    box-shadow: none;
-}
-
-dropdown-header1 {
-    text-align: center;
-    font-size: 1em;
-    color: #ddd;
-    background: #212531;
-    background: linear-gradient(to right bottom, #2f3441 50%, #212531 50%);
-}
+}*/
 
 /*.sidebar-nav .dropdown-menu1 {
     position: relative;
@@ -327,7 +223,7 @@ dropdown-header1 {
     top: 0;
 }*/
 /*Fontawesome icons*/
-.nav.sidebar-nav li a::before {
+/*.nav.sidebar-nav li a::before {
     font-family: fontawesome;
     content: "\f12e";
     vertical-align: baseline;
@@ -430,13 +326,13 @@ a[href*="#transaksi"]::before {
 
 a[href*="salesgrowth2.aspx"]::before {
     content: "\f201" !important;
-}
+}*/
 
 /*-------------------------------*/
 /*       Hamburger-Cross         */
 /*-------------------------------*/
 
-.hamburger {
+/*.hamburger {
     position: absolute;
     margin-top: 10px;
     top: 20px;
@@ -563,11 +459,4 @@ a[href*="salesgrowth2.aspx"]::before {
         -webkit-transform: translate3d(-100px,0,0);
         -webkit-transition: all .35s ease-in-out;
         margin-left: 190px
-    }
-/*Fontawesome icons*/
-
-
-/*test*/
-
-
-
+    }*/

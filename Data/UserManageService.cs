@@ -27,9 +27,9 @@ namespace TSJ_CRI.Data
                 using (var connection = new SqlConnection(ConnStrProd))
                 {
                     connection.Open();
-                    users = connection.Query<UserManage>("SELECT user_id id ,username, email, status, roles, USERS.Org_ID org_id, CABANG.BRANCH_NAME CABANG " +
+                    users = connection.Query<UserManage>("SELECT user_id id ,username, email,email_2,email_3, status, roles, USERS.Org_ID org_id, CABANG.BRANCH_NAME CABANG " +
                                     "FROM User_CRI USERS, CABANG_CRI CABANG " +
-                                    "WHERE USERS.ORG_ID = CABANG.ORG_ID and cabang.Org_id != 81 order by id asc").ToList();
+                                    "WHERE USERS.ORG_ID = CABANG.ORG_ID  order by id asc").ToList();
                     connection.Close();
                 }
                 return users;
@@ -74,12 +74,16 @@ namespace TSJ_CRI.Data
                         status = _user.status,
                         roles = _user.roles,
                         email = _user.email,
+                        email_2= _user.email_2,
+                        email_3= _user.email_3,
                         username = _user.username
 
                     };
                     var sql = await connection.ExecuteAsync("update User_CRI" +
                                 " set username = @username" +
                                 ", email = @email" +
+                                ", email_2=@email_2" +
+                                ", email_3=@email_3"+
                                 ", org_id = @org_id" +
                                 ", roles = @roles" +
                                 ", status = @status" +
@@ -105,13 +109,17 @@ namespace TSJ_CRI.Data
                     {
                         @username = _user.username,
                         @email = _user.email,
+                        @email_2=_user.email_2,
+                        @email_3= _user.email_3,
                         @roles = _user.roles,
                         @org_id = _user.org_id,
                         @status = '1'
                     };
-                    var sql = await connection.ExecuteAsync("insert into User_CRI(username,email,roles,org_id,status) " +
+                    var sql = await connection.ExecuteAsync("insert into User_CRI(username,email,Email_2,Email_3,roles,org_id,status) " +
                             "values(@username," +
                                    "@email, " +
+                                   "@email_2," +
+                                   "@email_3," +
                                    "@roles, " +
                                    "@org_id, " +
                                    "@status)",parameters);

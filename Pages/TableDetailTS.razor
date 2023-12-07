@@ -1,0 +1,772 @@
+﻿@page "/DTTS/{id_temp}"
+@inject IJSRuntime JS
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@using System.Web;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Http.Features;
+@using System.Net.Http.Headers;
+@using System.Threading.Tasks;
+@using System.Net.Mail;
+
+
+@inject UserKetidaksesuaianService userKetidaksesuaianService
+@inject Form2service form2service
+@inject NavigationManager NavManager
+@inject PrintTSService cobaservicecs
+
+
+<br/>
+
+<h3>Detail Ketidaksesuaian</h3>
+<br/>
+
+@{
+    var SpecificCols = (new string[] { "username" });
+    var Tool = (new List<string>() { "Search" });
+    var RenderingMode = RowDirection.Horizontal;
+}
+
+
+<div class="col-lg-12 control-section ">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="content-wrapper e-bigger e-adaptive-demo">
+                <div class="e-mobile-layout">
+                    <div class="e-mobile-content">
+                        <SfGrid DataSource="@_userK" AllowSorting="true" AllowPaging="true" AllowResizing="true" AllowTextWrap="true" Toolbar="@Tool" TValue="UserKetidaksesuaian" EnableAdaptiveUI="true"
+                                RowRenderingMode="@RenderingMode" style="position:inherit !important">
+                            <GridSearchSettings Fields=@SpecificCols IgnoreCase="true"></GridSearchSettings>
+                            <GridEditSettings AllowEditing="true" AllowAdding="true" AllowDeleting="true"></GridEditSettings>
+                            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UserKetidaksesuaian"></GridEvents>
+                            <GridPageSettings PageSize="10"></GridPageSettings>
+                            <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
+                            <GridColumns>
+
+                                <GridColumn Field="@nameof(UserKetidaksesuaian.Dokumen)" HeaderText="No.Dokumen"></GridColumn>
+                                <GridColumn Field="@nameof(UserKetidaksesuaian.PO)" HeaderText="No. PO TSJ"></GridColumn>
+                                <GridColumn Field="@nameof(UserKetidaksesuaian.Nama)" HeaderText="Nama Produk"></GridColumn>
+                                <GridColumn Field="@nameof(UserKetidaksesuaian.TSdokumen)" HeaderText="Kuantitas Dokumen"></GridColumn>
+                                <GridColumn Field="@nameof(UserKetidaksesuaian.TSproduk)" HeaderText="Kuantitas Produk"></GridColumn>
+                                
+                            </GridColumns>
+                        </SfGrid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+@*<HxSubmit Color="ThemeColor.Primary" OnClick="">Print</HxSubmit>*@
+
+@*<div class="control-section">
+    <table>
+
+        <tr>
+            <td colspan="4">
+                <div class="button-section">
+                    <div id="button-control">
+                        <div class="row">
+                            <div>
+                                <SfButton  IconCss="e-icons e-download" Value=@("DOCX") @bind-Checked="@documentType" @onclick="GenerateDocument">Download</SfButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>*@
+
+<AuthorizeView Roles="1,2">
+    <Authorized>
+        <div class="control-section">
+
+            <div class="button-section">
+                <div id="button-control">
+
+                    <div class="row">
+
+                        <p class="c">Klik disini untuk download </p>
+                        <p class="d">Klik disini untuk upload </p>
+                        <p class="b">Note : Upload hanya bisa sekali dalam bentuk zip (Max 10 MB)</p>
+                        <p class="a">Note : Download hanya bisa sekali </p>
+                        <SfButton Disabled="@hide"  CssClass="e-custom1" IconCss="e-icons e-download" @onclick="GeneratePDF">Download PDF</SfButton>
+
+
+
+                        <SfUploader MaxFileSize="10485760" AllowMultiple="false" AutoUpload="false" AllowedExtensions=".zip" CssClass="btn-upload">
+                            <UploaderEvents BeforeRemove="BeforeRemove"></UploaderEvents>
+                            <UploaderEvents ValueChange="OnChange"
+                                            OnRemove="OnRemove"></UploaderEvents>
+
+                        </SfUploader>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+<HxModal @ref="myModal" Title="Modal title">
+    <BodyTemplate>
+        <img src="/foto.JPG" style="width:100%;height:200px;">
+        <br/>
+        pencet allow/boleh
+    </BodyTemplate>
+    <FooterTemplate>
+        <HxButton Text="Close" OnClick="HandleHideClick" Color="ThemeColor.Primary" />
+    </FooterTemplate>
+</HxModal>
+
+<div class="row offset-32">
+    <AuthorizeView Roles="1,3,4,5">
+        <Authorized>
+            <SfButton  CssClass="e-custom2" @onclick="download1">Download Uploaded PDF</SfButton>
+        </Authorized>
+    </AuthorizeView>
+
+    <AuthorizeView Roles="1">
+        <Authorized>
+            <SfButton CssClass="e-custom-5" @onclick="approval">Approval Admin</SfButton>
+        </Authorized>
+    </AuthorizeView>
+
+
+    <AuthorizeView Roles="4">
+        <Authorized>
+            <SfButton  CssClass="e-custom-3" @onclick="approvallogistik">Approval Logistik</SfButton>
+        </Authorized>
+    </AuthorizeView>
+
+
+    <AuthorizeView Roles="5">
+        <Authorized>
+            <SfButton  CssClass="e-custom-4" @onclick="approvalFA">Approval FA</SfButton>
+        </Authorized>
+    </AuthorizeView>
+</div>
+
+<style>
+    .control-wrapper {
+        max-width: 350px;
+        margin: 0 auto;
+        padding: 50px 0px 0px;
+    }
+
+    .e-upload.e-control-wrapper, .e-bigger.e-small .e-upload.e-control-wrapper {
+        height: 57px;
+        width: 250px;
+    }
+    .e-upload .e-file-select-wrap .e-btn, .e-upload .e-upload-actions .e-btn, .e-bigger.e-small .e-upload .e-file-select-wrap .e-btn, .e-bigger.e-small .e-upload .e-upload-actions .e-btn {
+
+            background-color: #008CBA;
+            color: #fff;
+            border-color: #008CBA;
+}
+    .property-panel-content {
+        padding: 0px 0px 20px 0px;
+    }
+    .property-panel-content:last-child {
+        padding: 0px 0px 40px 0px;
+    }
+
+    .control-section .row {
+        margin: 10px 0;
+    }
+
+    p.a {
+        font-size: 14px;
+        font-style: italic;
+        display: @display1;
+        margin-bottom: 0px;
+    }
+
+    p.b {
+        font-size: 14px;
+        font-style: italic;
+        display: @display;
+        margin-bottom: 0px;
+    }
+
+    p.c {
+        font-size: 18px;
+        font-style: normal;
+        display: @display1;
+        margin-bottom: 10px;
+    }
+
+    p.d {
+        font-size: 18px;
+        font-style: normal;
+        display: @display;
+        margin-bottom: 10px;
+    }
+
+    .btn-upload {
+        display: @display;
+        margin-left: 10px;
+    }
+
+.e-custom1, .e-custom1:hover, .e-custom1:focus, .e-custom1:active {
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+
+    .e-custom2, .e-custom2:hover, .e-custom2:focus, .e-custom2:active {
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+
+    .e-custom3, .e-custom3:hover, .e-custom3:focus, .e-custom3:active {
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+
+    .e-custom4, .e-custom4:hover, .e-custom4:focus, .e-custom4:active {
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+    .e-custom5, .e-custom5:hover, .e-custom5:focus, .e-custom5:active {
+            background-color: #008CBA;
+            color: #fff;
+            border-color: #008CBA;
+        }
+    .e-custom1 {
+        display: @display1;
+        margin-left:10px;
+        height: 35px;
+        width: 140px;
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+
+    .e-custom2 {
+        display: @display2;
+        margin-left: @spacing;
+        height: 35px;
+        width: 200px;
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+    .e-custom-3 {
+        display: @display3;
+        margin-left: 10px;
+        height: 35px;
+        width: 200px;
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+    .e-custom-4 {
+        display: @display4;
+        margin-left: 10px;
+        height: 35px;
+        width: 200px;
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+
+    .e-custom-5 {
+        display: @display5;
+        margin-left: 10px;
+        height: 35px;
+        width: 200px;
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+    }
+</style>
+
+
+
+@code {
+
+    private List<UserKetidaksesuaian> _userK;
+    public string ErrorDetails = "";
+    private bool IsVisible { get; set; } = true;
+    private string UserId = "";
+    private string filename = "";
+    private string update = "";
+    private string now;
+    private string cabang;
+    private string Branch = null;
+
+
+
+    private List<UserForm2> _userf;
+
+    public bool hide { get; set; } = false;
+    private string display = "none";
+    private string display1 = "block";
+    private string FILENAME;
+    private string display2 = "none";
+
+    private string kirim;
+    private string Message;
+    private string spacing = "10px";
+
+    List<Produk> _produk;
+    private string display3 = "none";
+    private string display4 = "none";
+    private string display5 = "none";
+    public string emailuser;
+    public string emailpusat;
+    public string emailFA;
+    public string emailLogistik;
+    public string emailekspedisi;
+    public string ekspedisi;
+
+
+
+    [Parameter]
+
+    public string id_temp { get; set; } = "";
+    public string download { get; set; } = "";
+    public string updateTS { get; set; }="" ;
+    public string DocumentPath { get; set; }
+    public string no_pengajuan{ get; set; }
+    public string acronim{ get; set; }
+    public int HNA { get; set; }
+    public string approve{ get; set;}
+    public string FA { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    [Inject] protected IHxMessengerService Messenger { get; set; }
+    private async void ErrorMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddError(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    private async void SuccessMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddInformation(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await authenticationState;
+        if (auth.User.Identity.IsAuthenticated)
+        {
+            UserId = auth.User.FindFirst("userid").Value.ToString();
+            cabang = auth.User.FindFirst("org_id").Value;
+            now = id_temp;
+        }
+        FA = await form2service.GetFA(id_temp);
+        approve = await form2service.Getapprove(id_temp);
+        Branch = await form2service.cabang(cabang);
+        download = await form2service.getdownload(id_temp);
+        updateTS = await form2service.getupdate(id_temp);
+        FILENAME = await form2service.getfile(id_temp);
+        emailuser = await form2service.getemail(UserId);
+        no_pengajuan = await form2service.getpengajuan(id_temp);
+        acronim = await form2service.acronim(cabang);
+        emailuser = await form2service.getemail(UserId);
+        
+        var emailFAlist = await form2service.getemailFA();
+        var emailLogistiklist = await form2service.getemailLogistik();
+        var emailpusatlist = await form2service.getemailpusat();
+        HNA = await form2service.gethna(id_temp);
+        ekspedisi = await form2service.getekspedisi(id_temp);
+        emailekspedisi = await form2service.getemailekspedisi(ekspedisi);
+
+        emailFA = String.Join(", ", emailFAlist.Select(x=>x.email).ToArray());
+        emailLogistik = String.Join(", ", emailLogistiklist.Select(x => x.email).ToArray());
+        emailpusat = String.Join(", ", emailpusatlist.Select(x => x.email).ToArray());
+        disp();
+        up();
+    }
+    private void sentemail()
+    {
+        try
+        {
+            using (MailMessage mail = new MailMessage())
+            {
+                mail.From = new MailAddress("noreply.tsjcri@tsj.co.id");
+                char[] spearator = { ',' };
+
+                // using the method
+                String[] strlist = emailekspedisi.Split(spearator,
+                   StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (String s in strlist)
+                {
+                    mail.To.Add(s);
+                }
+                mail.Subject = "TSJCRI: ajuan klaim kepada " + _userf.FirstOrDefault().PT + " mengenai Ketidaksesuaian";
+                mail.Body = "Kepada: " + System.Environment.NewLine + "Yth. Bapak/Ibu " + System.Environment.NewLine + _userf.FirstOrDefault().PT + System.Environment.NewLine + System.Environment.NewLine + "Dengan hormat," + System.Environment.NewLine + System.Environment.NewLine + "Barang kiriman ketidaksesuaian telah kami terima pertanggal "
+                + (_userf.FirstOrDefault().Tanggal.ToString("dd MMMM yyyy") ?? "" ) +System.Environment.NewLine+ "Namun barang yang kami terima mengalami kendala "
+                + _userf.FirstOrDefault().Ketidaksesuaian + " dengan keterangan yang terlampir sebagai berikut " + System.Environment.NewLine + "Demikian klaim ini kami ajukan dan kami menunggu kabar positif dari PT "+_userf.FirstOrDefault().PT
+                + System.Environment.NewLine + System.Environment.NewLine + "Hormat Kami," + System.Environment.NewLine + "PT Tri Sapta Jaya ";
+
+
+                if (emailuser != null)
+                {
+                    char[] spearator1 = { ',' };
+
+                    // using the method
+                    strlist = emailuser.Split(spearator,
+                       StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (String s in strlist)
+                    {
+                        mail.To.Add(s);
+                    }
+                }
+                if (emailpusat != null)
+                {
+
+                    char[] spearator1 = { ',' };
+
+                    // using the method
+                    strlist = emailpusat.Split(spearator,
+                       StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (String s in strlist)
+                    {
+                        mail.To.Add(s);
+                    }
+                }
+                if (emailLogistik != null)
+                {
+
+                    char[] spearator1 = { ',' };
+
+                    // using the method
+                    strlist = emailLogistik.Split(spearator,
+                       StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (String s in strlist)
+                    {
+                        mail.To.Add(s);
+                    }
+                }
+                if (emailFA != null)
+                {
+
+                    char[] spearator1 = { ',' };
+
+                    // using the method
+                    strlist = emailFA.Split(spearator,
+                       StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (String s in strlist)
+                    {
+                        mail.To.Add(s);
+                    }
+                }
+                mail.IsBodyHtml = false;
+                string filePath = Path.Combine("D:", "test upload", no_pengajuan + filename);
+                string fileName = FILENAME;
+                byte[] bytes = File.ReadAllBytes(filePath);
+
+                var attachment = new System.Net.Mail.Attachment(filePath);
+                attachment.TransferEncoding = System.Net.Mime.TransferEncoding.QuotedPrintable;
+                mail.Attachments.Add(attachment);
+                using (SmtpClient smtp = new SmtpClient("mail.enseval.com", 25))
+                {
+                    smtp.UseDefaultCredentials = false;
+                    smtp.EnableSsl = false;
+                    smtp.Send(mail);
+                    Message = "mail sent";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CloseDialog();
+
+            _userf = form2service.GetUser2(now);
+            _userK = userKetidaksesuaianService.GetUser2(now);
+            disp();
+            up();
+            Approve();
+            ApproveFA();
+            Admin();
+            StateHasChanged();
+        }
+    }
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+    private void foto()
+    {
+        var files = Directory.GetFiles("Upload/riwayat.JPG");
+    }
+
+    private async Task getrefdata()
+    {
+
+        userKetidaksesuaianService.GetUser2(now);
+    }
+    private void disp()
+    {
+
+        if (@download == "1")
+        {
+            display = "block";
+            hide = !hide;
+            display1 = "none";
+
+        }
+        else
+        {
+            display = "none";
+        }
+    }
+    private void up()
+    {
+        if (@updateTS == "Sudah")
+        {
+            display = "none";
+            display2 = "block";
+            display3 = "block";
+            display5 = "block";
+        }
+        else
+        {
+
+            display2 = "none";
+        }
+    }
+    private void Approve()
+    {
+
+        if (@approve == "Approved by Logistik")
+        {
+            display3 = "none";
+            display4 = "block";
+            spacing = "80px";
+        }
+
+
+    }
+    private void ApproveFA()
+    {
+
+        if (@FA == "Approved by FA")
+        {
+            display4 = "none";
+            spacing = "80px";
+        }
+
+
+    }
+    private void Admin()
+    {
+        if (@FA == "Approved by FA" & @approve == "Approved by Logistik")
+        {
+            display5 = "none";
+            spacing = "80px";
+        }
+    }
+
+    private void approval()
+    {
+        form2service.Updateapprove(id_temp);
+        form2service.UpdateapproveFA(id_temp);
+        OpenMessageBox();
+        NavManager.NavigateTo("History");
+    }
+
+    private void approvallogistik()
+    {
+        form2service.Updateapprove(id_temp);
+        OpenMessageBox();
+        NavManager.NavigateTo("History");
+    }
+
+    private void approvalFA()
+    {
+
+        form2service.UpdateapproveFA(id_temp);
+        OpenMessageBox();
+        NavManager.NavigateTo("History");
+    }
+    private async void download1()
+    {
+
+        string[] path = { @"D:\test upload\" + FILENAME };
+        var filePath = Path.Combine(path);
+        FileStream fileStream = new FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+        MemoryStream stream = new MemoryStream();
+        fileStream.CopyTo(stream);
+        byte[] byteArray = stream.ToArray();
+        string base64String = Convert.ToBase64String(byteArray);
+        DocumentPath = "data:application/pdf;base64," + base64String;
+
+        await JS.InvokeAsync<object>("saveAsFile", FILENAME, base64String);
+    }
+
+    public async Task ActionBeginHandler(ActionEventArgs<UserKetidaksesuaian> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            var result = await userKetidaksesuaianService.UpdateUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
+
+            //Args.Action selalu edit ga perlu if else
+        }
+        else if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+        {
+            var result = await userKetidaksesuaianService.DeleteUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
+        }
+    }
+    private MessageBoxButtons showResult;
+
+    [Inject] protected IHxMessageBoxService MessageBox { get; set; }
+    private async Task OpenMessageBox()
+    {
+
+        showResult = await MessageBox.ShowAsync("Update","Sudah di Approve", MessageBoxButtons.Ok);
+    }
+
+    public void ActionCompleteHandler(ActionEventArgs<UserKetidaksesuaian> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            _userK = userKetidaksesuaianService.GetUser2(now);
+        }
+        else if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            _userK = userKetidaksesuaianService.GetUser2(now);
+        }
+    }
+    private void BeforeRemove(BeforeRemoveEventArgs args)
+    {
+        args.PostRawFile = false;
+    }
+
+    private async Task OnChange(UploadChangeEventArgs args)
+    {
+
+        filename = Path.Combine(args.Files[0].FileInfo.Name);
+        var result = await userKetidaksesuaianService.InsertUpdate(id_temp , filename, update);
+        //foreach (var file in args.Files)
+        //{
+        var path = Path.Combine("D:", "test upload", filename);
+
+        FileStream filestream = new FileStream(path, FileMode.Create, FileAccess.Write);
+        args.Files[0].Stream.WriteTo(filestream);
+        filestream.Close();
+        args.Files[0].Stream.Close();
+        NavManager.NavigateTo("History");
+        if (@updateTS == "Sudah")
+        {
+            display = "none";
+            display2 = "block";
+        }
+        else
+        {
+            display = "block";
+            display2 = "none";
+        }
+        sentemail();
+        StateHasChanged();
+        //}
+    }
+    private void OnRemove(RemovingEventArgs args)
+    {
+        foreach (var removeFile in args.FilesData)
+        {
+            if (File.Exists(Path.Combine("D:", "test upload", filename)))
+            {
+                File.Delete(Path.Combine("D:", "test upload", filename));
+            }
+        }
+    }
+
+    //public async Task GenerateDocument(MouseEventArgs args)
+    //{
+    //    PrintTSService service = new PrintTSService();
+    //    documentStream = service.CreateWord(_userf, Branch, _userK);
+    //    if (documentType == "DOCX")
+    //    await JS.SaveAs("113 Berita Acara Ketidaksesuaian Pengiriman.docx", documentStream.ToArray());
+    //}
+    public async void GeneratePDF(MouseEventArgs args)
+    {
+        await HandleShowClick();
+        PrintTSPDFService service = new PrintTSPDFService();
+        MemoryStream documentStream = service.CreatePdfDocument1(_userf, Branch, _userK,acronim);
+        await JS.SaveAs(_userf.FirstOrDefault().no_pengajuan +" Berita Acara Ketidaksesuaian Pengiriman.pdf", documentStream.ToArray());
+
+        HNATSservice service1 = new HNATSservice();
+        MemoryStream documentStream1 = service1.CreateHNATS(_produk, _userK, Branch, acronim, _userf, no_pengajuan);
+        await JS.SaveAs(_userf.FirstOrDefault().no_pengajuan +" HNA.pdf", documentStream1.ToArray());
+
+        download = await form2service.updownload(id_temp);
+        if (@download == "1")
+        {
+            display = "block";
+            hide = !hide;
+            display1 = "none";
+
+        }
+        else
+        {
+            display = "none";
+        }
+        StateHasChanged();
+    }
+    private HxModal myModal;
+
+	private async Task HandleShowClick()
+	{
+		await myModal.ShowAsync();
+	}
+
+	private async Task HandleHideClick()
+	{
+		await myModal.HideAsync();
+	}
+
+    
+}
+    

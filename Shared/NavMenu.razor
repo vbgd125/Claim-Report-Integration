@@ -4,27 +4,38 @@
 
 <style>
     .sidebar {
-        background-color: #f8f9fa;
+        background: linear-gradient(#4595d2, #78b3df );
     }
 </style>
-<div class="top-row pl-4 navbar navbar-light bg-white">
-    <a class="navbar-brand" style="color:darkblue" href="/">Claim Report - TSJ</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+
+
+
+
+
+        <nav class="navbar navbar-expand static-top" style="background: linear-gradient(#4595d2, #78b3df );">
+            
+                <div class="navbar-brand mr-1 align-middle">
+
+
+                    
+                    <span class="text-white " style="color: white;">Claim Report - TSJ</span> 
+                </div>
+            
+</nav>
+
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" style="color:darkblue" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" style="color:darkblue" aria-hidden="true"></span> Dashboard
+            <NavLink class="nav-link" style="color:white" href="/" Match="NavLinkMatch.All">
+                <span class="oi oi-home" style="color:white" aria-hidden="true"></span> Dashboard
             </NavLink>
         </li>
-        <AuthorizeView Roles="1">
+        <AuthorizeView Roles="1,3">
             <Authorized>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" style="color:darkblue" href="user">
-                        <span class="oi oi-person" style="color:darkblue" aria-hidden="true"></span> User
+                    
+                    <li class="nav-item px-3">
+                    <NavLink class="nav-link" style="color:white" href="user">
+                        <span class="oi oi-person" style="color:white" aria-hidden="true"></span> User
                     </NavLink>
                 </li>
             </Authorized>
@@ -32,23 +43,33 @@
         <AuthorizeView Roles="1,2">
             <Authorized>
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" style="color:darkblue" href="counter">
-                        <span class="oi oi-plus" style="color:darkblue" aria-hidden="true"></span> Pengajuan
+                    <NavLink class="nav-link" style="color:white" href="counter">
+                        <span class="oi oi-plus" style="color:white" aria-hidden="true"></span> Pengajuan
                     </NavLink>
                 </li>
             </Authorized>
         </AuthorizeView>
-        <AuthorizeView Roles="2">
+        <AuthorizeView Roles="1,2,3,4,5">
             <Authorized>
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="fetchdata">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                    <NavLink class="nav-link" style="color:white" href="History">
+                        <span class="oi oi-inbox" style="color:white" aria-hidden="true"></span> Riwayat
                     </NavLink>
                 </li>
-            </Authorized>
+                </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="1,3">
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" style="color:white" href="Coba">
+                        <span class="oi oi-inbox" style="color:white" aria-hidden="true"></span> Coba Upload
+                    </NavLink>
+                </li>
+                </Authorized>
         </AuthorizeView>
     </ul>
 </div>
+
 
 
 @code {

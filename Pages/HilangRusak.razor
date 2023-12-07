@@ -1,61 +1,476 @@
 ﻿@page "/hilangrusak"
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@using Havit.Blazor.Components.Web
+@using Havit.Blazor.Components.Web.Bootstrap
 @inject IJSRuntime JS
+@inject Formservice formservice
+@inject NavigationManager NavManager
+@inject UserHRService userHRservice
+
+
 
 <div class="pb-3">
     <br />
     <h1>Form Berita Acara Kehilangan atau Kerusakan Produk</h1>
     <br />
-    <p class="lead"> Silahkan Diisi Dengan Data Yang Sebenarnya</p>
-    <br />
-    <EditForm Model="model">
+    <EditForm Model="Form">
         <DataAnnotationsValidator />
-        <HxFormValue Label="Cabang" Value="@cabang" />
+        <ValidationSummary/>
+
         <div class="row">
-            <div class="col-6">
-                <div class="form-group mb-4">
-                    <label>Tanggal Kerusakan/Hilang</label>
-                    <div class="datepicker date input-group p-0 shadow-sm">
-                        <input type="date" placeholder="Tanggal Rusak" class="form-control py-4 px-4" @bind-value="@tglrusak">
+            <div class="col-3 offset-32">
+                <div class="form-group ">
+
+                    <h5>Cabang</h5>
+                    <div class=" input-group p-0 shadow-sm">
+                        <input type="value" placeholder="Cabang" class="form-control py-2 px-2 text-center " @bind-value="@Branch" readonly>
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+
+        </div>
+        @*        <div class="row">
+        <div class="col-3">
+        <div class="form-group mb-4">
+        <label> Cabang</label>
+        <div class="input-group p-0 shadow-sm">
+        <input type="value" placeholder="cabang" class="form-control py-2 px-4" @bind-value="@cabang" readonly>
+        </div>
+        </div>
+        </div>
+        <div class="col-3">
+        <div class="form-group mb-4">
+        <label>No header</label>
+        <div class="input-group p-0 shadow-sm">
+        <input type="value" placeholder="no header" class="form-control py-2 px-4"  @bind-value="@seq" readonly>
+
+        </div>
+        </div>
+        </div>
+        </div>*@
+        <div class="row">
+
+            <div class="col-3 offset-32">
                 <div class="form-group mb-4">
                     <label>Tanggal Pengiriman</label>
                     <div class="datepicker date input-group p-0 shadow-sm">
-                        <input type="date" placeholder="Tanggal Pengiriman" class="form-control py-4 px-4" @bind-value="@tglkirim">
+                        <input type="date" placeholder="Tanggal Pengiriman" class="form-control py-4 px-4" @bind-value="@Form.tglkirim" required>
                     </div>
                 </div>
             </div>
         </div>
-        <HxInputText Label="Nama Ekspedisi" @bind-Value="@namaekspedisi" Placeholder="ex: PT.Tri Sapta Jaya" />
-        <HxInputText @bind-Value="@emailekspedisi" Label="Email Ekspedisi" InputMode="InputMode.Email" />
-        <HxInputText @bind-Value="@nokendaraan" Label="No Polisi Kendaraan" />
-        <HxInputText @bind-Value="@namasupir" Label="Nama Pengemudi" />
-        <HxInputText @bind-Value="@nopengiriman" Label="No Pengiriman" Hint="SPK/Faktur/Shipment/Do/TT" />
-        <HxInputText @bind-Value="@pengirimandari" Label="Pengiriman Dari" />
-        <HxInputText @bind-Value="@pengirimanke" Label="Tujuan Pengiriman" />
-        <HxInputText @bind-Value="@nodokument" Label="Nomer Dokumen Surat Jalan" Hint="AWB" />
-        <HxInputNumber @bind-Value="@koli" Label="Jumlah Koli" />
-        @*<HxSubmit Color="ThemeColor.Primary" OnValidClick="@()">
-        <i class="bi bi-box-arrow-in-right"></i> Submit dan Lanjutkan Detail</HxSubmit>*@
+        <div class="card col-4 offset-31">
+            <div class="mb-2 offset-31  ">
+                <label for="hilangrusak" class="form-label text-center">Hilang/Rusak</label>
+            </div>
+            <div class="mb-2 offset-30 ">
+                <div class="form-group col-mb-2">
+                    <InputRadioGroup @bind-Value="@Form.hilangrusak">
+                        @foreach (var item in _hilangrusak)
+                        {
+                            <div class="form-check form-check-inline ">
+                                <InputRadio class="form-check-input1  " Value="item.listhilangrusak" required />
+                                <label class="form-check-label">@item.Description</label>
+                            </div>
+
+                        }
+
+                    </InputRadioGroup>
+                    <ValidationMessage For="()=>Form.hilangrusak" />
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="column card1 offset-0">
+
+                <div class="form-group mb-2">
+                    <label>Nama Ekspedisi</label>
+                    <br />
+                    <br />
+                    <br />
+                    <SfDropDownList ID="listekspedisi" TItem="Ekspedisi" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" IgnoreCase="true" TValue="string" AllowFiltering="true" Placeholder="Pilih Salah Satu" DataSource="@_Ekspedisi" CssClass="form-control py-2 px-2" @bind-Value="@Form.namaekspedisi" PopupHeight="350px" PopupWidth="350px">
+                        <DropDownListFieldSettings Value="NAMA_EKSPEDISI" Text="NAMA_EKSPEDISI"></DropDownListFieldSettings>
+
+
+                    </SfDropDownList>
+                    <ValidationMessage For="()=>Form.namaekspedisi" />
+
+                </div>
+
+            </div>
+            <div class="column card2 ">
+                <div class="form-group mb-2">
+
+                    <label> Pengemudi (Ekspedisi)</label>
+                    <br />
+                    <br />
+
+                    <div class="group">
+                        <input type="a" required @bind-value="@Form.nokendaraan"
+                               oninvalid="this.setCustomValidity('No Tidak Boleh Kosong')"
+                               oninput="this.setCustomValidity('')">
+
+                        <label1>Nomor Kendaraan</label1>
+
+                    </div>
+                </div>
+
+
+                <div class="form-group mb-2">
+                    <div class="group">
+                        <input type="a" pattern="[A-Za-z\s]{1,50}" title="Hanya boleh Alphabet" required @bind-value="Form.namasupir"
+                               oninvalid="this.setCustomValidity('Nama Tidak Boleh Kosong')"
+                               oninput="this.setCustomValidity('')">
+
+
+
+                        <label1>Nama Supir</label1>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <br />
+
+        <div class="card3 offset-1">
+            <div class="row ">
+                <label>Detail Pengiriman</label>
+                <br />
+                <br />
+                <div class="col-4">
+                    <div class="form-group mb-2">
+                        <div class="group">
+                            <input type="b" required="" @bind-value="@Form.nopengiriman">
+                            <small>SPK/Faktur/Shipment/Do/TT</small>
+
+                            <label1>No Pengiriman</label1>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-4 ">
+                    <div class="form-group mb-2">
+                        <div class="group">
+
+                            <SfDropDownList  ID="listalamat" TItem="Cabang" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" IgnoreCase="true" TValue="string" AllowFiltering="true" Placeholder="Asal Pengiriman" DataSource="@_Alamat1" CssClass="form-control py-1 px-2" @bind-Value="@Form.pengirimandari" PopupHeight="350px" PopupWidth="350px">
+                        <DropDownListFieldSettings Value="Address1" Text="alamat" ></DropDownListFieldSettings>
+
+
+                    </SfDropDownList>
+
+                            
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mb-2">
+                        <div class="group">
+                            
+                                   <SfDropDownList  ID="listalamat1" TItem="Cabang" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" IgnoreCase="true" TValue="string" AllowFiltering="true" Placeholder="Tujuan Pengiriman" DataSource="@_Alamat" CssClass="form-control py-1 px-2" @bind-Value="@Form.pengirimanke" PopupHeight="350px" PopupWidth="350px">
+                        <DropDownListFieldSettings Value="Address1" Text="alamat"></DropDownListFieldSettings>
+
+
+                    </SfDropDownList>
+
+                            
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-4 offset-2">
+                    <div class="form-group mb-2">
+                        <div class="group">
+                            <input type="b" required @bind-value="@Form.nodokument"
+                                   oninvalid="this.setCustomValidity('Alamat Tidak Boleh Kosong')"
+                                   oninput="this.setCustomValidity('')">
+
+
+                            <label1>No Dokumen Surat Jalan</label1>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mb-2">
+                        <div class="group">
+                            <input type="b" pattern="[0-9]+" title="Hanya Boleh Numerical" required @bind-value="@Form.koli">
+
+
+                            <label1>Jumlah Koli</label1>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        @{
+            var SpecificCols = (new string[] { "username" });
+            var Tool = (new List<string>() { "Search" });
+            var RenderingMode = RowDirection.Horizontal;
+        }
+
+        <br />
+
+        <div class="container">
+            <div class="col-xs-12 col-md-2 offset-42">
+                <SfButton IconCss="e-icons e-plus" CssClass="row2" IsPrimary="true" @onclick="@OpenDialog">Detail</SfButton>
+            </div>
+
+        </div>
+        <hr />
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="content-wrapper e-bigger e-adaptive-demo">
+                        <div class="e-mobile-layout">
+                            <div class="e-mobile-content">
+                                <SfGrid DataSource="@_userH" Width="1400" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" TValue="UserFormHR" EnableAdaptiveUI="true"
+                                        RowRenderingMode="@RenderingMode" style="position:inherit !important">
+                                    <GridSearchSettings Fields=@SpecificCols IgnoreCase="true"></GridSearchSettings>
+                                    <GridEditSettings AllowEditing="true" AllowAdding="true" AllowDeleting="true"></GridEditSettings>
+                                    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UserFormHR"></GridEvents>
+                                    <GridPageSettings PageCount="2" PageSize="5"></GridPageSettings>
+                                    <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
+                                    <GridColumns>
+
+                                        <GridColumn Field="@nameof(UserFormHR.Kode)"IsPrimaryKey="true" HeaderText="Kode Produk"></GridColumn>
+                                        <GridColumn Field="@nameof(UserFormHR.Namaproduk)" HeaderText="Nama Produk"></GridColumn>
+                                        <GridColumn Field="@nameof(UserFormHR.Batch)" HeaderText="Batch Produk"></GridColumn>
+                                        <GridColumn Field="@nameof(UserFormHR.Expiredate)" HeaderText="Expire Date"></GridColumn>
+                                        <GridColumn Field="@nameof(UserFormHR.Jumlah)" HeaderText="Jumlah Produk"></GridColumn>
+                                        <GridColumn Field="@nameof(UserFormHR.Ket)" HeaderText="Keterangan"></GridColumn>
+                                        <GridColumn HeaderText="Edit">
+                                            <GridCommandColumns>
+                                                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-edit", CssClass="e-flat" })"></GridCommandColumn>
+                                                <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-save", CssClass="e-flat" })"></GridCommandColumn>
+                                                <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-cancel-icon", CssClass="e-flat" })"></GridCommandColumn>
+                                                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-delete", CssClass = "e-flat" })"></GridCommandColumn>
+                                            </GridCommandColumns>
+                                        </GridColumn>
+                                    </GridColumns>
+                                </SfGrid>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <HxSubmit CssClass="row3 " Color="ThemeColor.Primary" OnValidClick="@(async () => {await InsertRow4() ;await InsertRow3(Form);  })">Submit</HxSubmit>
+
     </EditForm>
- </div>
+</div>
+
+
+
+
+
+<SfDialog Target="#target" Width="350px" AllowDragging="false" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+    <DialogTemplates>
+        <Header> Detail  </Header>
+        <Content>
+
+            <EditForm Model="@HR">
+                <DataAnnotationsValidator />
+
+                <div class="form-column">
+                    <div class="form-group col-md-12">
+                        <label>Kode Produk</label>
+                        
+                        <SfComboBox ID="kodeprod" TItem="Produk" TValue="string" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" IgnoreCase="true" TValue="string" AllowFiltering="true" Placeholder="Pilih Salah Satu"PopupHeight="350px" PopupWidth="350px" DataSource="@_produk"
+                        @bind-Value="@HR.Kode">
+                        <ComboBoxEvents TItem="Produk" TValue="string" ValueChange="@ValueChangeHandler"></ComboBoxEvents>
+                        <ComboBoxFieldSettings Value="kodeprod" Text="pengenal"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label>Nama Produk</label>
+                        <SfTextBox @bind-Value="@HR.Namaproduk" Readonly></SfTextBox>
+
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label>Batch Number</label>
+                        <SfTextBox @bind-Value="@HR.Batch" required></SfTextBox>
+                        <ValidationMessage For="@(() => HR.Batch)" />
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label>Expire Date</label>
+                        <SfDatePicker TValue="DateTime?" @bind-Value="@HR.Expiredate"></SfDatePicker>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label>Jumlah Produk</label>
+                        <SfNumericTextBox Min="1" @bind-Value="@HR.Jumlah" required></SfNumericTextBox>
+                        <ValidationMessage For="@(() => HR.Jumlah)" />
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label>Keterangan</label>
+                        <SfTextBox @bind-value="@HR.Ket"maxlength="99" required></SfTextBox>
+                    </div>
+                </div>
+                <HxSubmit CssClass="row1 offset-9" Color="ThemeColor.Primary" OnValidClick="@(async () => await InsertRow1(HR) )">Submit</HxSubmit>
+            </EditForm>
+
+
+        </Content>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@AnimationEffect" Duration=600 />
+
+</SfDialog>
+
+
+
+
+
+
+
+<style>
+    .group {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    input[type=a] {
+        font-size: 12px;
+        padding: 10px 10px 10px 5px;
+        display: block;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #757575;
+    }
+
+    input[type=b] {
+        font-size: 12px;
+        padding: 10px 10px 10px 5px;
+        display: block;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #757575;
+    }
+    
+    .row1 {
+        --bs-gutter-x: 0rem;
+        --bs-gutter-y: 0;
+        display: flex;
+        font-size: 14px;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--bs-gutter-y));
+        margin-right: calc(-0.5 * var(--bs-gutter-x));
+        margin-left: calc(-0.5 * var(--bs-gutter-x));
+        width: 75px;
+        
+    }
+
+    .row3 {
+        --bs-gutter-x: 0rem;
+        --bs-gutter-y: 0;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--bs-gutter-y));
+        margin-right: calc(-0.5 * var(--bs-gutter-x));
+        margin-left: calc(-0.5 * var(--bs-gutter-x));
+        width: 400px;
+        display:@display1;
+        margin-left: 31.5%;
+    }
+    input:focus {
+        outline: none;
+    }
+
+    /* LABEL ======================================= */
+    label1 {
+        color: #999;
+        font-size: 12px;
+        font-weight: normal;
+        position: absolute;
+        pointer-events: none;
+        left: 5px;
+        top: 10px;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+    }
+
+    /* active state */
+    input:focus ~ label1, input:valid ~ label1 {
+        top: -20px;
+        font-size: 12px;
+        color: #5264AE;
+        
+    }
+
+
+
+    p.a {
+        font-size: 10px;
+        font-style: italic;
+    }
+
+    .row2 {
+        --bs-gutter-x: 0rem;
+        --bs-gutter-y: 0;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--bs-gutter-y));
+        margin-right: calc(-0.5 * var(--bs-gutter-x));
+        margin-left: calc(-0.5 * var(--bs-gutter-x));
+        width: 200px
+    }
+
+    .validation-message {
+        color: red;
+        padding: 5px 0px 0px;
+    }
+</style>
 
 @code {
     private string cabang = null;
-    public string namaekspedisi { get; set; }
-    public string emailekspedisi { get; set; }
-    public string nokendaraan { get; set; }
-    public string namasupir { get; set; }
-    public string nopengiriman { get; set; }
-    public string pengirimandari { get; set; }
-    public string pengirimanke { get; set; }
-    public string nodokument { get; set; }
-    public int koli { get; set; }
-    public DateTime tglrusak { get; set; } = DateTime.Today;
-    public DateTime tglkirim { get; set; } = DateTime.Today;
+    UserFormbaru Form = new UserFormbaru();
+    private string update;
+    private bool IsVisible { get; set; } = true;
+    private string UserId = "";
+    private List<UserFormHR> _userH;
+    UserFormHRbaru HR = new UserFormHRbaru();
+    public string ErrorDetails = "";
+    private DialogEffect AnimationEffect = DialogEffect.Zoom;
+    private int sequence;
+    private string seq;
+    private string Branch = null;
+    List<Ekspedisi> _Ekspedisi;
+    private Ekspedisi ekspedisi = new Ekspedisi();
+    private List<UserForm> _userf;
+    UserForm _userh = new UserForm();
+    private string sekarang;
+    private string roles;
+    public bool hide { get; set; } = false;
+    private int hitung;
+    List<Produk> _produk;
+    List<Cabang> _Alamat;
+    List<Cabang> _Alamat1;
+    private string display1 = "none";
+    private bool flag = false;
 
+    [Parameter]
+    public string id_temp { get; set; } = "";
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
@@ -66,22 +481,57 @@
         if (authState.User.Identity.IsAuthenticated)
         {
             cabang = authState.User.FindFirst("org_id").Value;
+            UserId = authState.User.FindFirst("userid").Value.ToString();
+        }
+
+        seq = await formservice.count();
+        sequence = await formservice.updatecount();
+        await userHRservice.deletetemp(UserId);
+        Branch = await formservice.cabang(cabang);
+        sekarang = id_temp;
+        roles = await formservice.getroles(UserId);
+        hitung = await userHRservice.hitung();
+        submit();
+        
+        //update = await formservice.updatepengajuan(Form);
+    }
+
+    private void ValueChangeHandler(ChangeEventArgs<string, Produk> args)
+    {
+        if (args.ItemData == null)
+        {
+            HR.Namaproduk = null;
+        }
+        else
+        {
+            HR.Namaproduk = args.ItemData.namaprod;
         }
     }
 
-    [Inject] protected IHxMessengerService Messenger { get; set; }
-    private async void ErrorMessenger(string _title, string _message)
-    {
-        Messenger.Clear();
-        Messenger.AddError(title: _title, message: _message);
-        await Task.Delay(1000);
-    }
 
-    private async void WarningMessenger(string _title, string _message)
+    private void count()
     {
-        Messenger.Clear();
-        Messenger.AddWarning(title: _title, message: _message);
-        await Task.Delay(1000);
+        if (@hitung == 10)
+        {
+            hide = !hide;
+        }
+        else
+        {
+            hide = hide;
+
+        }
+    }
+    private void submit()
+    {
+        if (@hitung > 0)
+        {
+            display1 = "block";
+        }
+        else
+        {
+            display1 = "none";
+
+        }
     }
 
     protected FormHilang model = new FormHilang();
@@ -89,4 +539,216 @@
     {
 
     }
+    [Inject] protected IHxMessengerService Messenger { get; set; }
+    private async void ErrorMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddError(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    private async void SuccessMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddInformation(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CloseDialog();
+            _userH = userHRservice.GetUser(UserId);
+            _Ekspedisi = userHRservice.GetEkspedisi();
+            _produk = userHRservice.Getkodeproduk();
+            _userf = formservice.GetUser2(UserId, roles);
+            _Alamat = formservice.GetAlamat();
+            _Alamat1 = formservice.GetAlamat();
+            StateHasChanged();
+        }
+    }
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+
+    private async Task getrefdata()
+    {
+        userHRservice.GetUser(UserId);
+
+    }
+    private async Task InsertRow1(UserFormHRbaru userformHRbaru)
+    {
+        var result = await userHRservice.InsertUser(userformHRbaru, UserId, seq);
+        if (result.Item1 == 0)
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            ErrorMessenger("Belum berhasil insert 👀", mess);
+            await getrefdata();
+            StateHasChanged();
+        }
+        else
+        {
+            var mess = result.Item2;
+
+            SuccessMessenger("Berhasil insert", mess);
+            await getrefdata();
+            CloseDialog();
+            hitung = await userHRservice.hitung();
+            submit();
+            count();
+            StateHasChanged();
+
+            _userH = userHRservice.GetUser(UserId);
+            HR.Kode = null;
+            HR.Namaproduk = null;
+            HR.Batch = null;
+
+            HR.Jumlah = 0;
+            HR.Ket = null;
+
+        }
+    }
+
+
+
+    private async Task InsertRow2(UserFormHRbaru userformHRbaru)
+    {
+        var result = await userHRservice.InsertUser(userformHRbaru, UserId, seq);
+        if (result.Item1 == 0)
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            ErrorMessenger("Belum berhasil insert 👀", mess);
+            await getrefdata();
+            StateHasChanged();
+        }
+        else
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            SuccessMessenger("Berhasil insert", mess);
+            await getrefdata();
+            StateHasChanged();
+        }
+    }
+
+    //header
+    private async Task InsertRow3(UserFormbaru userformbaru)
+    {
+        if(flag==true){
+        var result = await formservice.InsertForm2(userformbaru, UserId, seq, cabang);
+        if (result.Item1 == 0)
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            ErrorMessenger("Belum berhasil insert 👀", mess);
+            await getrefdata();
+            StateHasChanged();
+
+        }
+        else
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            SuccessMessenger("Berhasil insert", mess);
+            await getrefdata();
+            StateHasChanged();
+            await OpenMessageBox();
+                NavManager.NavigateTo("History");
+
+
+        }
+        }
+
+    }
+    //detail
+    private async Task InsertRow4()
+    {
+        var result = await userHRservice.InsertForm2(UserId);
+        if (result.Item1 == 0)
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            ErrorMessenger("Belum berhasil insert 👀", mess);
+            await getrefdata();
+            StateHasChanged();
+            await ErrorMessageBox();
+            flag = false;
+        }
+        else
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            SuccessMessenger("Berhasil insert", mess);
+            await getrefdata();
+            flag = true;
+            StateHasChanged();
+
+        }
+    }
+    public async Task ActionBeginHandler(ActionEventArgs<UserFormHR> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            var result = await userHRservice.UpdateUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
+
+            //Args.Action selalu edit ga perlu if else
+        }
+        else if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+        {
+            var result = await userHRservice.DeleteUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
+        }
+    }
+
+    public void ActionCompleteHandler(ActionEventArgs<UserFormHR> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            _userH = userHRservice.GetUser(UserId);
+        }
+        else if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            _userH = userHRservice.GetUser(UserId);
+        }
+    }
+    List<hilangrusak> _hilangrusak = new List<hilangrusak>
+    {
+        new hilangrusak() { listhilangrusak = "KERUSAKAN", Description = "Kerusakan" },
+        new hilangrusak() { listhilangrusak = "KEHILANGAN", Description = "Kehilangan" },
+
+    };
+    [Inject] protected IHxMessageBoxService MessageBox { get; set; }
+
+    private MessageBoxButtons showResult;
+    private bool confirmResult;
+
+    private async Task OpenMessageBox()
+    {
+        var data = formservice.GetNo(seq);
+        showResult = await MessageBox.ShowAsync("Submit Berhasil", "No Pengajuan anda: " + data.FirstOrDefault().no_pengajuan, MessageBoxButtons.Ok);
+    }
+    private async Task ErrorMessageBox()
+    {
+
+
+        showResult = await MessageBox.ShowAsync("Error", "Masih Ada yang Belum Diisi. Ayo Dicek Lagi", MessageBoxButtons.Ok);
+    }
+
+
 }

@@ -10,13 +10,17 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Havit.Blazor.Components.Web;
 
+
+
 namespace TSJ_CRI
 {
     public class Startup
     {
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -26,6 +30,7 @@ namespace TSJ_CRI
         [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddAuthentication();
             services.AddAuthorization();
 
@@ -33,14 +38,24 @@ namespace TSJ_CRI
             services.AddServerSideBlazor();
             services.AddHxServices();
             services.AddHxMessenger();
+            services.AddHxMessageBoxHost();
             services.AddSyncfusionBlazor();
-
             services.AddSingleton<UserAccountService>();
             services.AddSingleton<UserManageService>();
-
+            services.AddSingleton<SampleDataController>();
+            services.AddSingleton<UserKetidaksesuaianService>();
+            services.AddSingleton<Form2service>();
+            services.AddSingleton<Formservice>();
+            services.AddSingleton<UserHRService>();
+            services.AddSingleton<IndexService>();
+            services.AddSingleton<PrintTSService>();
+            services.AddSingleton<PrintTSPDFService>();
+            services.AddSingleton<PrintHRService>();
             services.AddScoped<ProtectedSessionStorage>();
             services.AddScoped<CustomAuth>();
             services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuth>());
+            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,10 +77,14 @@ namespace TSJ_CRI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            
+
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

@@ -1,0 +1,631 @@
+﻿@page "/History"
+@inject IJSRuntime JS
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@inject Form2service form2service
+@inject IJSRuntime js
+@inject Formservice formservice
+@inject NavigationManager NavManager
+@inject UserKetidaksesuaianService userketidaksesuaian
+@inject UserHRService userHRservice
+
+
+<br />
+<AuthorizeView Roles="1,3,4,5">
+                                    <Authorized>
+<h4>Export Excel</h4>
+<div class="row ">
+    <p class="a">Tanggal Pengajuan</p>
+    <p class="b">Tipe</p>
+</div>
+<div class="row offset-01">
+    
+    <SfDateRangePicker TValue="DateTime?" StartDate="@StartValue" EndDate="@EndValue">
+    <DateRangePickerEvents TValue="DateTime?" ValueChange="@onChange"></DateRangePickerEvents>
+</SfDateRangePicker>
+
+    <div class="form-group col-md-2 col-">
+<SfDropDownList TValue="string" TItem="file" DataSource="@File" @bind-Value="@filterfile" Placeholder="Pilih Disini" >
+    <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
+</SfDropDownList>
+</div>
+    <div class="form-group col-md-3">
+        <SfButton IsPrimary="true" @onclick="@CreateDocument">Export Document</SfButton>
+</div>
+
+</div>
+</Authorized>
+                                </AuthorizeView>
+                                <br/>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-10">
+        </div>
+    </div>
+</div>
+<br />
+<h2>Riwayat Hilang / Rusak</h2>
+@{
+    var SpecificCols = (new string[] { "UserForm" });
+    var SpecificCols1 = (new string[] { "Tanggal" });
+    var Tool = (new List<string>() { "Search" });
+    var RenderingMode = RowDirection.Horizontal;
+
+}
+
+
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="content-wrapper e-bigger e-adaptive-demo">
+                <div class="e-mobile-layout">
+                    <div class="e-mobile-content">
+                        
+                        <SfGrid @ref="DefaultGrid" DataSource="@_userF" Width="1300px" Toolbar=@Tool AllowSorting="true" AllowPaging="true" AllowResizing="true" AllowTextWrap="true"  TValue="UserForm"
+                                EnableAdaptiveUI="true" style="position:inherit !important">
+                            <GridSearchSettings Operator=Syncfusion.Blazor.Operator.Contains IgnoreCase="true"></GridSearchSettings>
+                            <GridEditSettings AllowEditing="false"></GridEditSettings>
+                            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler"  TValue="UserForm"></GridEvents>
+                            <GridPageSettings PageCount="40" PageSize="6"></GridPageSettings>
+                            <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
+                            <GridColumns>
+                               <GridColumn HeaderText="Detail" Width="100">
+                                    <Template>
+                                        @{
+                                            var data = (context as UserForm);
+                                            <button type="button" class="btn button1 btn-sm" @onclick="(()=>viewDetail(data))"><i class="bi bi-info-circle-fill"></i> Detail</button>
+                                        }
+                                    </Template>
+                               </GridColumn>
+                                @*@if (roles == "4" || roles =="5") {
+                                <GridColumn Width="100" Field="Approve" TextAlign="TextAlign.Left" >
+                                    <GridCommandColumns>
+                                        <GridCommandColumn ButtonOption="@(new CommandButtonOptions() { Content = "Approve", CssClass = "e-flat" } )"></GridCommandColumn>
+
+                                    </GridCommandColumns>
+                                </GridColumn>
+                                }*@
+                                <GridColumn Field="@nameof(UserForm.no_pengajuan)" HeaderText="ID" Width="150" IsPrimaryKey="true"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.hilangrusak)" HeaderText="Barang" Width="150" IsPrimaryKey="true"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.namaekspedisi)" HeaderText="Nama Ekspedisi"Width="200"></GridColumn>
+                          
+                                <GridColumn Field="@nameof(UserForm.tglkirim)" HeaderText="tgl kirim"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.namasupir)" HeaderText="nama supir"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.nopengiriman)" HeaderText="no pengiriman"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.pengirimandari)" HeaderText="pengiriman dari"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.pengirimanke)" HeaderText="pengiriman ke"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.nodokument)" HeaderText="no dokument"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm.koli)" HeaderText="Koli"></GridColumn>
+
+                                <GridColumn HeaderText="Status Upload">
+                                    <Template>
+                                        @{
+                                            var employee = (context as UserForm);
+                                                                        <div class="template_checkbox">
+                                                                            @if (employee.UpdateHR == "Sudah")
+                                                {
+                                                                                <i class="e-icons e-check-large"> </i>
+                                                }
+                                                else
+                                                {
+                                                                                <i class="e-icons e-close"> </i>
+                                                }
+                                                                        </div>
+                                        }
+                                    </Template>
+                                </GridColumn>
+                                @if (roles == "4" || roles == "1")
+                                {
+                                <GridColumn Width="250" Field="@nameof(UserForm.Approve)" HeaderText="Status Approval Logistik">
+                                <Template>
+                                        @{
+                                            var employee = (context as UserForm);
+                                                <div class="template_checkbox">
+                                                    @if (employee.Approve == "Belum di Approve")
+                                                {
+                                                        <a href="DTHR/@employee.id_temp">@employee.Approve</a>
+                                                }
+                                                else{
+                                                    
+                                                        <p>@employee.Approve</p>
+                                                }
+                                                </div>
+                                        }
+                                    </Template>
+                                    </GridColumn>
+                                    }
+                                    else{
+                                        <GridColumn Width="250" Field="@nameof(UserForm.Approve)" HeaderText="Status Approval Logistik"></GridColumn>
+                                    }
+                                    @if(roles=="5"|| roles=="1"){
+                                    <GridColumn Field="@nameof(UserForm.FA)" HeaderText="Status Approval FA">
+                                        <Template>
+                                        @{
+                                            var employee = (context as UserForm);
+                                                <div class="template_checkbox">
+                                                    @if (employee.FA == "Belum di Approve")
+                                                {
+                                                        <a href="DTHR/@employee.id_temp">@employee.FA</a>
+                                                }
+                                                else{
+                                                    
+                                                        <p>@employee.FA</p>
+                                                }
+                                                </div>
+                                        }
+                                    </Template>
+                                    </GridColumn>
+                                    }else
+                                    {
+                                        <GridColumn Field="@nameof(UserForm.FA)" HeaderText="Status Approval FA"></GridColumn>
+                                    }
+                                <AuthorizeView Roles="1,3,4,5">
+                                    <Authorized>
+                                        <GridColumn Field="@nameof(UserForm.branch_name)" HeaderText="Cabang"></GridColumn>
+                                    </Authorized>
+                                </AuthorizeView>
+                                
+                            </GridColumns>
+                            
+                        </SfGrid>
+
+                        <div class="text-center pt-1 pb-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<br />
+<br />
+<h2>Riwayat Ketidaksesuaian </h2>
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="content-wrapper e-bigger e-adaptive-demo ">
+                <div class="e-mobile-layout">
+                    <div class="e-mobile-content">
+                        <SfGrid DataSource="@_userK" Width="1200px" AllowSorting="true" Toolbar=@Tool AllowPaging="true" AllowTextWrap="true"  TValue="UserForm2" EnableAdaptiveUI="true "
+                                RowRenderingMode="@RenderingMode" style="position:inherit !important ,font-size: 12px; ">
+                            <GridSearchSettings Operator=Syncfusion.Blazor.Operator.Contains IgnoreCase="true"></GridSearchSettings>
+                            <GridEditSettings AllowEditing="false"></GridEditSettings>
+                            <GridEvents   OnActionBegin="ActionBeginHandler2" OnActionComplete="ActionCompleteHandler2"  TValue="UserForm2"></GridEvents>
+                            <GridPageSettings PageCount="40" PageSize="6"></GridPageSettings>
+                            <GridTextWrapSettings WrapMode="WrapMode.Content"></GridTextWrapSettings>
+                            <GridColumns>
+                                <GridColumn HeaderText="Detail" Width="100">
+                                    <Template>
+                                        @{
+                                            var data = (context as UserForm2);
+                                            <button1 type="button" class="btn button1 btn-sm" @onclick="(()=>viewDetail2(data))"><i class="bi bi-info-circle-fill"></i> Detail</button1>
+                                        }
+                                    </Template>
+                               </GridColumn>
+                                @*@if (roles == "4" || roles == "5") {
+                                <GridColumn Width="100" Field="Approve" TextAlign="TextAlign.Left" >
+                                    <GridCommandColumns>
+                                        <GridCommandColumn ButtonOption="@(new CommandButtonOptions() { Content = "Approve", CssClass = "e-flat" } )"></GridCommandColumn>
+
+                                    </GridCommandColumns>
+                                </GridColumn>
+                                }*@
+                                <GridColumn Field="@nameof(UserForm2.no_pengajuan)" HeaderText="ID" IsPrimaryKey="true"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm2.Tanggal)" HeaderText="Tanggal"></GridColumn>
+                               
+                                <GridColumn Field="@nameof(UserForm2.PT)" HeaderText="Jasa Ekspedisi PT"></GridColumn>
+                                <GridColumn Field="@nameof(UserForm2.Ketidaksesuaian)" HeaderText="Ketidaksesuaian"></GridColumn>
+                                <AuthorizeView Roles="1,3,4,5">
+                                    <Authorized>
+                                        <GridColumn Field="@nameof(UserForm2.branch_name)" HeaderText="Cabang"></GridColumn>
+                                    </Authorized>
+                                </AuthorizeView>
+                                <GridColumn  HeaderText="Status Upload">
+                                    <Template>
+                                        @{
+                                            var employee = (context as UserForm2);
+                                                                            <div class="template_checkbox">
+                                                                                @if (employee.UpdateTS == "Sudah")
+                                                {
+                                                                                    <i class = "e-icons e-check-large" > </i> 
+                                                    }
+                                                    else
+                                                    {
+                                                                                <i class="e-icons e-close"> </i>
+                                                }
+                                                                            </div>
+                                        }
+                                        </Template>
+                                    </GridColumn>
+                                @if (roles == "4" || roles == "1" || roles=="3")
+                                    {
+                                <GridColumn Width="250" Field="@nameof(UserForm2.Approve)" HeaderText="Status Approval Logistik">
+                                    
+                                    <Template>
+                                        @{
+                                            var employee = (context as UserForm2);
+                                                <div class="template_checkbox">
+                                                    @if (employee.Approve == "Belum di Approve")
+                                                {
+                                                        <a href="DTTS/@employee.id_temp">@employee.Approve</a>
+                                                }
+                                                else
+                                                {
+
+                                                        <p>@employee.Approve</p>
+                                                }
+                                                </div>
+                                        }
+                                    </Template>
+                                    
+                                </GridColumn>
+                                }else{
+                                    <GridColumn Width="250" Field="@nameof(UserForm2.Approve)" HeaderText="Status Approval Logistik"></GridColumn>
+                                }
+                                @if(roles=="5" || roles=="1" )
+                                {
+                                <GridColumn Field="@nameof(UserForm2.FA)" HeaderText="Status Approval FA">
+                                    <Template>
+                                        @{
+                                            var employee = (context as UserForm2);
+                                                <div class="template_checkbox">
+                                                    @if (employee.FA == "Belum di Approve")
+                                                {
+                                                        <a href="DTTS/@employee.id_temp">@employee.FA</a>
+                                                }
+                                                else
+                                                {
+
+                                                        <p>@employee.FA</p>
+                                                }
+                                                </div>
+                                        }
+                                    </Template>
+                                </GridColumn>
+                                }else{
+                                    <GridColumn Field="@nameof(UserForm2.FA)" HeaderText="Status Approval FA"></GridColumn>
+                                }
+                                   <AuthorizeView Roles="1,2,3">
+                                    <Authorized>
+                                                
+                                                </Authorized>
+                                </AuthorizeView>
+                                    </GridColumns>
+                                </SfGrid>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <style>
+            .e-plus-icon::before {
+                content: '\e823';
+                font-size: 12px;
+                text-overflow: clip;
+                white-space: nowrap;
+            }
+
+             p.a {
+            font-size: 12px;
+             padding-right:0px;
+        width: 20%;
+        margin-bottom: 0px;
+        }
+        .button1 {
+        background-color: #008CBA;
+        color: #fff;
+        border-color: #008CBA;
+        } 
+         p.b {
+            font-size: 12px;
+             padding-right:0px;
+             margin-left:9.5%;
+        width: 15%;
+        margin-bottom: 0px;
+        }
+    .e-input-group:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error) {
+        display :sticky;
+        width: 350px;
+        padding-left:0px;
+        padding-right:0px;
+    }
+
+    .e-input-group input.e-input, .e-input-group.e-control-wrapper input.e-input {
+        height: 30px;
+        font-size: 14px;
+        width: 350px;
+    }
+
+    .e-dashboardlayout {
+        padding: 10px;
+    }
+
+        .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+            line-height: 40px;
+            height: 40px;
+        }
+
+    .fluent .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header,
+    .fluent-dark .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        height: 56px;
+    }
+</style>
+        
+
+@code {
+    private List<UserForm2> _userK;
+    private List<UserForm> _userF;
+    public string ErrorDetails = "";
+    private bool IsVisible { get; set; } = true;
+    private string UserId = "";
+    private string cabang;
+    private string roles;
+    private SfGrid<UserForm> DefaultGrid;
+    public string SearchString = "";
+    private List<UserForm> _userf1;
+    private List<UserFormHR> _userH;
+    private List<UserKetidaksesuaian> _userk;
+    private List<UserForm2> _userf2;
+    private string Branch = null;
+    private string approval;
+    private string FA;
+
+    [Parameter]
+
+    public string id_temp { get; set; } = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+    // belum bisa validasi error message
+    //protected UserDetail model = new UserDetail();
+    //public class UserDetail
+    //{
+    //    [Required(ErrorMessage = "No.Dokumen tidak boleh kosong")]
+    //    [MaxLength(50, ErrorMessage = "Panjang maksimal username 50 karakter.")]
+    //    public string Dokumen { get; set; }
+    //    [Required(ErrorMessage = "No.PO tidak boleh kosong")]
+    //    [MaxLength(100, ErrorMessage = "Panjang maksimal password 100 karakter.")]
+    //    public string PO { get; set; }
+    //}
+
+
+    [Inject] protected IHxMessengerService Messenger { get; set; }
+    private async void ErrorMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddError(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    private async void SuccessMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddInformation(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    public string filterfile;
+
+    public class file
+    {
+        public string Name { get; set; }
+
+        public string Code { get; set; }
+    }
+
+    List<file> File = new List<file>
+{
+        new file() {  Name= "Hilang/Rusak", Code = "1" },
+        new file() { Name = "Ketidaksesuaian", Code = "2" },
+
+    };
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            cabang = authState.User.FindFirst("org_id").Value;
+            UserId = authState.User.FindFirst("userid").Value.ToString();
+            roles = authState.User.FindFirst("roles").Value;
+        }
+        //roles = await formservice.getroles(UserId);
+        id_temp = await form2service.count();
+        Branch = await form2service.cabang(cabang);
+        _userF = formservice.GetUser2(UserId,roles);
+        var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        StartValue = firstDayOfMonth;
+
+
+    }
+    public DateTime? StartValue { get; set; }
+
+    public DateTime? EndValue { get; set; } = DateTime.Now;
+
+    private void onChange(RangePickerEventArgs<DateTime?> args)
+    {
+        StartValue = args.StartDate;
+        EndValue = args.EndDate;
+        _userf1 = formservice.GetUser(StartValue, EndValue);
+        _userf2 = form2service.GetUser(StartValue, EndValue);
+
+
+        StateHasChanged();
+    }
+    MemoryStream excelStream;
+    protected async void CreateDocument()
+    {
+
+        if (filterfile == "Hilang/Rusak")
+        {
+            ExportExcelHR service = new ExportExcelHR();
+            excelStream = service.CreateExcel(_userH, _userf1, Branch);
+            await JS.SaveAs("Riwayat HR.xlsx", excelStream.ToArray());
+        }
+        if (filterfile == "Ketidaksesuaian")
+        {
+            ExportExcelTS service = new ExportExcelTS();
+            excelStream = service.CreateExcel(_userk, _userf2, Branch);
+            await JS.SaveAs("Riwayat TS.xlsx", excelStream.ToArray());
+        }
+        if (filterfile == null)
+        {
+            await OpenMessageBox1();
+        }
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CloseDialog();
+            _userF = formservice.GetUser2(UserId,roles);
+            _userK = form2service.GetUser1(UserId,roles);
+            _userf1 = formservice.GetUser(StartValue,EndValue);
+            _userH = userHRservice.GetUsertest();
+            _userf2 = form2service.GetUser(StartValue, EndValue);
+            _userk = userketidaksesuaian.GetUser3();
+            form2service.Getapprovehistory();
+            StateHasChanged();
+
+        }
+    }
+
+    public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+
+        await this.DefaultGrid.ExportToExcelAsync();
+
+    }
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+
+    private async Task getrefdata()
+    {
+        form2service.GetUser1(UserId,roles);
+        formservice.GetUser2(UserId,roles);
+
+    }
+
+
+    //private async Task InsertRow(UserBaru userBaru)
+    //{
+    //    var result = await userKetidaksesuaianService.InsertUser(userBaru);
+    //    if (result.Item1 == 0)
+    //    {
+    //        var mess = result.Item2;
+    //        CloseDialog();
+    //        ErrorMessenger("Belum berhasil insert 👀", mess);
+    //        await getrefdata();
+    //        StateHasChanged();
+    //    }
+    //    else
+    //    {
+    //        var mess = result.Item2;
+    //        CloseDialog();
+    //        SuccessMessenger("Berhasil insert", mess);
+    //        await getrefdata();
+    //        StateHasChanged();
+    //    }
+    //}
+
+    public async Task ActionBeginHandler(ActionEventArgs<UserForm> Args)
+    {
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            var result = await formservice.UpdateUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
+
+            //Args.Action selalu edit ga perlu if else
+        }
+
+    }
+
+    public void ActionCompleteHandler(ActionEventArgs<UserForm> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            _userF = formservice.GetUser2(UserId,roles);
+        }
+        else if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            _userF = formservice.GetUser2(UserId, roles);
+        }
+    }
+
+
+
+    public async Task ActionBeginHandler2(ActionEventArgs<UserForm2> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            var result = await form2service.UpdateUser(Args.Data);
+            if (result.Item1 == 0)
+            {
+                var mess = result.Item2;
+            }
+
+            //Args.Action selalu edit ga perlu if else
+        }
+
+    }
+
+    public void ActionCompleteHandler2(ActionEventArgs<UserForm2> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            _userK = form2service.GetUser1(UserId,roles);
+        }
+        else if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            _userK = form2service.GetUser1(UserId,roles);
+        }
+    }
+
+    public void viewDetail(UserForm data) {
+        var id = data.id_temp;
+        NavManager.NavigateTo("DTHR/" + id);
+    }
+    public void viewDetail2(UserForm2 data) {
+        var id = data.id_temp;
+        NavManager.NavigateTo("DTTS/" + id);
+    }
+
+    [Inject] protected IHxMessageBoxService MessageBox { get; set; }
+
+    private MessageBoxButtons showResult;
+    private async Task OpenMessageBox1()
+    {
+
+
+        showResult = await MessageBox.ShowAsync("Error", "Pilih tipe Berita Acara", MessageBoxButtons.Ok);
+    }
+
+    
+}

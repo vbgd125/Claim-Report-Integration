@@ -9,11 +9,11 @@
 @using TSJ_CRI.Data
 @using TSJ_CRI.Model
 @inject UserManageService userManageService
-@attribute [Authorize(Roles = "1")]
+@attribute [Authorize(Roles = "1,3")]
 @inject IJSRuntime js
 
 <br />
-<div class="container">
+
     <div class="row">
         <div class="col-xs-12 col-md-10">
             <h3>User Management</h3>
@@ -22,7 +22,7 @@
             <SfButton IconCss="e-icons e-plus" IsPrimary="true" @onclick="@OpenDialog">New User</SfButton>
         </div>
     </div>
-</div>
+
 
 <br />
 
@@ -42,6 +42,16 @@
                         <label>User Email</label>
                         <SfTextBox @bind-Value="@modeldata.email"></SfTextBox>
                     </div>
+                    <div class="form-group col-md-6">
+                        <label>User Email 2</label>
+                        <SfTextBox @bind-Value="@modeldata.email_2"></SfTextBox>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>User Email 3</label>
+                        <SfTextBox @bind-Value="@modeldata.email_3"></SfTextBox>
+                    </div>
+
+
                     <div class="form-group col-md-6">
                         <label>Cabang</label>
                         <SfDropDownList ID="org_id" TItem="Cabang" TValue="string" @bind-Value="@(modeldata.org_id)" DataSource="@_cabang">
@@ -79,9 +89,9 @@
             <div class="content-wrapper e-bigger e-adaptive-demo">
                 <div class="e-mobile-layout">
                     <div class="e-mobile-content">
-                        <SfGrid DataSource="@_user" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" Toolbar="@Tool" TValue="UserManage" EnableAdaptiveUI="true"
+                        <SfGrid Width="100%" DataSource="@_user" AllowSorting="true" AllowPaging="true" AllowTextWrap="true" Toolbar="@Tool" TValue="UserManage" EnableAdaptiveUI="true"
                                 RowRenderingMode="@RenderingMode">
-                            <GridSearchSettings Fields=@SpecificCols IgnoreCase="true"></GridSearchSettings>
+                            @*<GridSearchSettings Fields=@SpecificCols IgnoreCase="true"></GridSearchSettings>*@
                             <GridEditSettings AllowEditing="true" AllowAdding="true"></GridEditSettings>
                             <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UserManage"></GridEvents>
                             <GridPageSettings PageSize="10"></GridPageSettings>
@@ -90,7 +100,10 @@
                                 <GridColumn Field="@nameof(UserManage.id)" HeaderText="No" IsPrimaryKey="true"></GridColumn>
                                 <GridColumn Field="@nameof(UserManage.username)" HeaderText="User Name"></GridColumn>
                                 <GridColumn Field="@nameof(UserManage.email)" HeaderText="Email"></GridColumn>
+                                <GridColumn Field="@nameof(UserManage.email_2)" HeaderText="Email 2"></GridColumn>
+                                      <GridColumn Field="@nameof(UserManage.email_3)" HeaderText="Email 3"></GridColumn>
                                 <GridColumn Field="@nameof(UserManage.cabang)" HeaderText="Cabang" EditType="EditType.DropDownEdit">
+                                     
                                     <EditTemplate>
                                         @{
                                             var UserCabang = (context as UserManage);
@@ -113,13 +126,25 @@
                                             @if (categori.roles == "2")
                                             {
                                                 <div>
-                                                    Pengisi
+                                                    Logistik Cabang
                                                 </div>
                                             }
                                             @if (categori.roles == "3")
                                             {
                                                 <div>
-                                                    Pengecek
+                                                    Admin Logistik Pusat
+                                                </div>
+                                            }
+                                            @if (categori.roles == "4")
+                                            {
+                                                <div>
+                                                    Logistik Pusat
+                                                </div>
+                                            }
+                                            @if (categori.roles == "5")
+                                            {
+                                                <div>
+                                                    FA
                                                 </div>
                                             }
                                         }
@@ -183,8 +208,6 @@
 @code {
     private List<UserManage> _user;
     private List<Cabang> _cabang;
-    private List<UserNew> _adduser;
-    private SfGrid<UserManage> Grid;
     //private Cabang SelectedOrg = new Cabang();
     UserNew modeldata = new UserNew();
     public string ErrorDetails = "";
@@ -200,8 +223,10 @@
     List<Roleses> _roles = new List<Roleses>
 {
         new Roleses() { Roles = "1", Description = "Admin" },
-        new Roleses() { Roles = "2", Description = "Pengisi" },
-        new Roleses() { Roles = "3", Description = "Pengecek" }
+        new Roleses() { Roles = "2", Description = "Logistik Cabang" },
+        new Roleses() { Roles = "3", Description = "Admin Logistik Pusat" },
+        new Roleses() { Roles = "4", Description = "Logistik Pusat" },
+        new Roleses() { Roles = "5", Description = "FA" }
     };
 
 
@@ -240,6 +265,11 @@
         this.IsVisible = false;
     }
 
+    private async Task getrefdata()
+    {
+        userManageService.GetUser();
+    }
+
 
     private async Task InsertRow(UserNew userNew)
     {
@@ -249,6 +279,7 @@
             var mess = result.Item2;
             CloseDialog();
             ErrorMessenger("Belum berhasil insert 👀", mess);
+            await getrefdata();
             StateHasChanged();
         }
         else
@@ -256,6 +287,7 @@
             var mess = result.Item2;
             CloseDialog();
             SuccessMessenger("Berhasil insert", mess);
+            await getrefdata();
             StateHasChanged();
         }
     }

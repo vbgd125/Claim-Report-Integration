@@ -1,0 +1,263 @@
+﻿@page "/Coba"
+@inject IJSRuntime JS
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@using Syncfusion.Blazor.PdfViewer
+@using System.IO;
+@using System.Web;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Http.Features;
+@using System.Net.Http.Headers;
+@using System.Threading.Tasks;
+@using System.Net.Mail;
+@inject Form2service form2service
+@inject Formservice formservice
+@inject UserHRService userHRservice
+@inject UserKetidaksesuaianService userketidaksesuaian
+
+<br />
+
+<div class="row">
+    <SfDateRangePicker TValue="DateTime?" StartDate="@StartValue" EndDate="@EndValue">
+    <DateRangePickerEvents TValue="DateTime?" ValueChange="@onChange"></DateRangePickerEvents>
+</SfDateRangePicker>
+    <div class="form-group col-md-2">
+<SfDropDownList TValue="string" TItem="file" DataSource="@File" @bind-Value="@filterfile" >
+    <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
+</SfDropDownList>
+</div>
+    <div class="form-group col-md-3">
+        <SfButton IsPrimary="true" @onclick="@CreateDocument">Save Document</SfButton>
+</div>
+    <div class="form-group col-md-12">
+        <label>Contoh</label>
+        <SfComboBox ID="kodeprod" TItem="Produk" TValue="string" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" IgnoreCase="true" TValue="string" AllowFiltering="true" Placeholder="Pilih Salah Satu"PopupHeight="350px" PopupWidth="350px" DataSource="@_produk">
+           
+          <ComboBoxFieldSettings Value="kodeprod" Text="pengenal"></ComboBoxFieldSettings>
+        </SfComboBox>
+
+    </div>
+</div>
+
+<style>
+    input[type=a] {
+        font-size: 12px;
+        padding: 10px 10px 10px 5px;
+        display: block;
+        width: 568px;
+        border: none;
+        border-bottom: 1px solid #757575;
+
+    }
+    .e-custom { 
+            display:@display;  
+            border-radius: 25px; 
+            height: 48px; 
+            width: 48px; 
+             
+        }
+
+    .e-input-group input.e-input, .e-input-group.e-control-wrapper input.e-input {
+        height: 30px;
+        font-size: 14px;
+        width: 350px;
+    }
+    .e-input-group:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error) {
+       
+        width:350px
+        
+    }
+</style>
+@code{
+    UserFormbaru2 Form2 = new UserFormbaru2();
+    private bool IsVisible { get; set; } = true;
+    private string seq;
+    private string UserId = "";
+    private string Branch = null;
+    private string cabang;
+    List<Ekspedisi> _Ekspedisi;
+    private string display = "block"; 
+    private List<UserForm> _userf;
+    private List<UserFormHR> _userH;
+    private List<UserKetidaksesuaian> _userK;
+    private List<UserForm2> _userF;
+    List<Produk> _produk;
+    //To hide/show the button 
+    private void toggle() 
+    { 
+        if (display == "block") 
+        { 
+            display = "none"; 
+        } else 
+        { 
+            display = "block"; 
+        } 
+    } 
+    public bool OkayDisabled = false; 
+    public void Click() 
+    { 
+        OkayDisabled = !OkayDisabled; 
+    } 
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    [Parameter]
+    public string id_temp { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            cabang = authState.User.FindFirst("org_id").Value;
+            UserId = authState.User.FindFirst("userid").Value.ToString();
+
+        }
+        seq = await form2service.count();
+
+        Branch = await form2service.cabang(cabang);
+        var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        StartValue = firstDayOfMonth;
+    }
+    private async Task getrefdata()
+    {
+
+        form2service.GetUser(StartValue,EndValue);
+    }
+    List<ketidaksesuaian> _ketidaksesuaian = new List<ketidaksesuaian>
+    {
+        new ketidaksesuaian() { listketidaksesuaian = "Jumlah Lebih", Description = "Jumlah Lebih" },
+        new ketidaksesuaian() { listketidaksesuaian = "Tidak Sesuai Pesanan", Description = "Tidak Sesuai Pesanan" },
+        new ketidaksesuaian() { listketidaksesuaian = "Selisih Batch Number", Description = "Selisih Batch Number" },
+        new ketidaksesuaian() { listketidaksesuaian = "ED Dekat", Description = "ED Dekat" }
+    };
+    public string filterfile;
+
+    public class file
+    {
+        public string Name { get; set; }
+
+        public string Code { get; set; }
+    }
+
+    List<file> File = new List<file>
+{
+        new file() {  Name= "Hilang/Rusak", Code = "1" },
+        new file() { Name = "Ketidaksesuaian", Code = "2" },
+
+    };
+    private async Task RowInsert(UserFormbaru2 userFormbaru2)
+    {
+        var result = await form2service.InsertUser(userFormbaru2, UserId, seq,cabang);
+
+
+        if (result.Item1 == 0)
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            ErrorMessenger("Belum berhasil insert 👀", mess);
+            await getrefdata();
+            StateHasChanged();
+        }
+        else
+        {
+            var mess = result.Item2;
+            CloseDialog();
+            SuccessMessenger("Berhasil insert", mess);
+            await getrefdata();
+            StateHasChanged();
+
+        }
+    }
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CloseDialog();
+            _userf = formservice.GetUser(StartValue,EndValue);
+            _userH = userHRservice.GetUsertest();
+            _userF = form2service.GetUser(StartValue, EndValue);
+            _userK = userketidaksesuaian.GetUser3();
+            _produk = userHRservice.Getkodeproduk();
+            StateHasChanged();
+        }
+    }
+    [Inject] protected IHxMessengerService Messenger { get; set; }
+    private async void ErrorMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddError(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    private async void SuccessMessenger(string _title, string _message)
+    {
+        Messenger.Clear();
+        Messenger.AddInformation(title: _title, message: _message);
+        await Task.Delay(1000);
+    }
+    private DemoModel model = new();
+    private string validationMessage = string.Empty;
+
+    private void SetValidationStatus(bool validationStatus)
+    {
+        if (validationStatus)
+        {
+            validationMessage = "Validation passed!";
+            return;
+        }
+
+        validationMessage = string.Empty;
+    }
+    MemoryStream excelStream;
+    protected async void CreateDocument()
+    {
+
+        if (filterfile == "Hilang/Rusak")
+        {
+            ExportExcelHR service = new ExportExcelHR();
+            excelStream = service.CreateExcel(_userH, _userf,Branch);
+            await JS.SaveAs("Riwayat HR.xlsx", excelStream.ToArray());
+        }
+        if (filterfile == "Ketidaksesuaian")
+        {
+            ExportExcelTS service = new ExportExcelTS();
+            excelStream = service.CreateExcel(_userK, _userF, Branch);
+            await JS.SaveAs("Riwayat TS.xlsx", excelStream.ToArray());
+        }
+    }
+    protected class DemoModel
+    {
+        [Required(ErrorMessage = "A text has to be written.")]
+        public string Text { get; set; }
+    }
+    public DateTime? StartValue { get; set; }
+
+    public DateTime? EndValue { get; set; } = DateTime.Now;
+
+    private void onChange(RangePickerEventArgs<DateTime?> args)
+    {
+        StartValue = args.StartDate;
+        EndValue = args.EndDate;
+        _userf = formservice.GetUser(StartValue,EndValue);
+        _userF = form2service.GetUser(StartValue, EndValue);
+        StateHasChanged();
+    }
+}

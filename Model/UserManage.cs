@@ -17,6 +17,9 @@ namespace TSJ_CRI.Model
         public string org_id { get; set; }
         public string status { get; set; }
         public string cabang { get; set; }
+        public string email_2 { get; set; }
+        public string email_3 { get; set; }
+
     }
 
     public class UserNew
@@ -31,6 +34,8 @@ namespace TSJ_CRI.Model
         public string roles { get; set; }
         [Required(ErrorMessage = "Email tidak dapat kosong")]
         public string email { get; set; }
+        public string email_2 { get; set; }
+        public string email_3 { get; set; }
     }
 
 }

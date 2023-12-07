@@ -1,0 +1,60 @@
+﻿@page "/Com"
+@inject IJSRuntime JS
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using TSJ_CRI.Data
+@using TSJ_CRI.Model
+@attribute [Authorize(Roles = "1")]
+@inject UserKetidaksesuaianService userKetidaksesuaianService
+@inject Form2service form2service
+@inject NavigationManager NavManager
+@inject HNAHRservice hnahr
+@inject Formservice formservice
+
+
+
+@*<SfButton  IconCss="e-icons e-download" @onclick="GenerateHNA">Download PDF</SfButton>*@
+
+@code{
+    List<Produk> _produk;
+    List<UserFormHR> _userh;
+    private string Branch = null;
+    private string cabang;
+    private string UserId = "";
+    public string Acronim { get; set; }
+    public int HNA;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await authenticationState;
+        if (auth.User.Identity.IsAuthenticated)
+        {
+            UserId = auth.User.FindFirst("userid").Value.ToString();
+            cabang = auth.User.FindFirst("org_id").Value;
+
+
+        }
+        Branch = await formservice.cabang(cabang);
+        Acronim = await formservice.acronim(cabang);
+        
+    }
+//public async void GenerateHNA(MouseEventArgs args)
+//    {
+        
+//        HNAHRservice service = new HNAHRservice();
+//        MemoryStream documentStream = service.CreateHNAHR(_produk,_userh,Branch,Acronim);
+//        await JS.SaveAs("HNA", documentStream.ToArray());
+        
+//        StateHasChanged();
+//    }
+    
+}
+
